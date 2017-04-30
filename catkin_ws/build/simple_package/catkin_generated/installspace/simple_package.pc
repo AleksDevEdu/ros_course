@@ -1,0 +1,8 @@
+prefix=/root/catkin_ws/install
+
+Name: simple_package
+Description: Description of simple_package
+Version: 0.0.0
+Cflags: 
+Libs: -L/root/catkin_ws/install/lib 
+Requires: 
