@@ -1,7 +1,7 @@
 FROM ros
 
 RUN apt-get update
-RUN apt-get install sudo
+RUN apt-get install sudo nano net-tools iputils-ping -y
 
 RUN mkdir -p /home/developer && \
     echo "developer:x:1000:1000:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
