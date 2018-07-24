@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="haha_package" type="tinker" name="tinker"/>
+    <node pkg="haha_package" type="linker" name="linker"
+          output="screen"/>
+</launch>

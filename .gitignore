@@ -1,6 +1,1 @@
-.bash_history
-.ros
-**build
-**devel
-# Symbol link
-catkin_ws/src/CMakeLists.txt
+.ipynb_checkpoints/*
