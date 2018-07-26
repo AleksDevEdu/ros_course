@@ -72,13 +72,13 @@ roslaunch rospy_tutorials talker_listener.launch
 
 ```xml
 <launch>
-    <include file="$(find my_new_package)/launch/otherfile.launch" />
+    <include file="$(find study_pkg)/launch/otherfile.launch" />
     <node name="listener" pkg="rospy_tutorials" type="listener.py" output="screen"/>
     <node name="talker" pkg="rospy_tutorials" type="talker.py" output="screen"/>
 </launch>
 ```
 
-Директива `(find my_new_package)` ищет пакет, имя которого передано аргументом и подставляет путь до него в случае удачного нахождения. Таким образом выполняется сначала launch-файл `otherfile.launch`, а затем остальное содержимое. Уровни вложенности launch-файлов не ограничены (насколько я знаю).
+Директива `(find study_pkg)` ищет пакет, имя которого передано аргументом и подставляет путь до него в случае удачного нахождения. Таким образом выполняется сначала launch-файл `otherfile.launch`, а затем остальное содержимое. Уровни вложенности launch-файлов не ограничены (насколько я знаю).
 
 ### Создание опций для launch-файлов
 

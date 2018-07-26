@@ -8,8 +8,8 @@
 
 За основу берется код узла
 ```cpp
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+#include <ros/ros.h>
+#include <std_msgs/String.h>
 
 #include <sstream>
 
@@ -47,8 +47,8 @@ int main(int argc, char **argv)
 
 Начинаем разбор c подключения заголовков ROS и сообщения `std_msgs/String`, а также заголовок функций формирования строк `sstream` ([информация о нем](http://www.cplusplus.com/reference/sstream/stringstream/)).
 ```cpp
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+#include <ros/ros.h>
+#include <std_msgs/String.h>
 
 #include <sstream>
 ```
@@ -101,8 +101,8 @@ int main(int argc, char **argv)
 
 А теперь рассмотрим код узла, который подписывается на топик и выводит полученный сообщения
 ```cpp
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+#include <ros/ros.h>
+#include <std_msgs/String.h>
 
 /**
  * This tutorial demonstrates simple receipt of messages over the ROS system.
@@ -128,8 +128,8 @@ int main(int argc, char **argv)
 
 Все те же заголовки
 ```cpp
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+#include <ros/ros.h>
+#include <std_msgs/String.h>
 ```
 
 Создаем обработчик получения сообщений, в аргументе сидит ссылка на сообщение, пример доступа к полю сообщения прелставлен в примере. Обработчик выводит данные в сообщении в консоль.
@@ -210,11 +210,11 @@ target_link_libraries(${TALKER_NODE_NAME} ${catkin_LIBRARIES} )
 
 После этого можно переходить в папку вашего ws (рабочего пространства) и вызывать команду `catkin_make`. При успешной компиляции в консоли не долно быть ошибок. Также, при успешной сборке, набор команды с автодополнением
 ```bash
-rosrun my_new_package t[TAB]
+rosrun study_pkg t[TAB]
 ```
 должен дать
 ```bash
-rosrun my_new_package talker_cpp
+rosrun study_pkg talker_cpp
 ```
 
 > Попробуйте написать макросы для сборки узла `listener_cpp`. Хорошей практикой является выделение комментариями блоков для сборки конкретных узлов. За основу выделения можно взять присутствующие в CMakeLists.txt блоки типа build.
@@ -225,7 +225,7 @@ rosrun my_new_package talker_cpp
 
 > Напишите launch-файл для новых узлов `talker_cpp` и `listener_cpp`, запустите его, убедитесь, что все работает. В отдельном терминале запустите программу `rqt_graph`. Любуйтесь =)
 
-
+> Напишите launch-файл, в котором происходит запуск `talker_cpp` и `listener` (C++ -> Python). Не забудьте смапировать топики к единому имени или смапировать один и топиков к другом. Убедитесь, что все работает.
 
 ## В результате
 

@@ -17,7 +17,7 @@ catkin_create_pkg [pkg_name] [dep1 dep2 ...]
 В данной команде первым аргументом передается имя нового пакета, после перечисляются зависимости данного пакета.
 Для начала создадим пакет и добавим поддержку библиотек python и cpp (c++)
 ```bash
-catkin_create_pkg my_new_package rospy roscpp
+catkin_create_pkg study_pkg rospy roscpp
 ```
 
 Далее наблюдаем созданную папку и два главных файла внутри: `CMakeLists.txt` и `package.xml`  
@@ -28,9 +28,9 @@ catkin_create_pkg my_new_package rospy roscpp
 ```xml
 <?xml version="1.0"?>
 <package format="2">
-  <name>my_new_package</name>
+  <name>study_pkg</name>
   <version>0.0.0</version>
-  <description>The my_new_package package</description>
+  <description>The study_pkg package</description>
   <maintainer email="alex@todo.todo">alex</maintainer>
   <license>TODO</license>
 ```
@@ -53,7 +53,7 @@ catkin_create_pkg my_new_package rospy roscpp
 Определение минимальной версии сборки `cmake` и название проекта
 ```cmake
 cmake_minimum_required(VERSION 2.8.3)
-project(my_new_package)
+project(study_pkg)
 ```
 
 Поиск и подключение зависимостей
