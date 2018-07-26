@@ -31,7 +31,7 @@ catkin_create_pkg study_pkg rospy roscpp
   <name>study_pkg</name>
   <version>0.0.0</version>
   <description>The study_pkg package</description>
-  <maintainer email="alex@todo.todo">alex</maintainer>
+  <maintainer email="user@todo.todo">user</maintainer>
   <license>TODO</license>
 ```
 
