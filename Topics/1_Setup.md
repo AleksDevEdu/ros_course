@@ -10,15 +10,15 @@
 
 Для начала необходимо импортировать все параметры и пути ROS, для этого можно воспользоваться командой:
 ```bash
-source /opt/ros/<distro>/setup.sh
+source /opt/ros/<distro>/setup.bash
 ```
 Для нашего случая:
 ```bash
-source /opt/ros/kinetic/setup.sh
+source /opt/ros/kinetic/setup.bash
 ```
 или
 ```bash
-. /opt/ros/kinetic/setup.sh
+. /opt/ros/kinetic/setup.bash
 ```
 > Команды `source` и `.` равны =)
 
@@ -26,7 +26,7 @@ source /opt/ros/kinetic/setup.sh
 
 Для автоматического импорта при запуске терминала необходимо прописать строку 
 ```bash
-. /opt/ros/kinetic/setup.sh
+. /opt/ros/kinetic/setup.bash
 ```
 в конец файла `~/.bashrc`. Он находится в домашней директории и скрыт, так как начинается с точки. Символ `~` - означает (равен) `/home/<пользователь>`, в нашем случае это `/home/user`. Открыть файл можно командой:
 ```bash
@@ -54,7 +54,7 @@ catkin_make
 
 После этого рабочее пространство готово и осталось добавить в файл `~/.bashrc` строку для подтягивания всех переменных и путей, чтобы система ROS видела пакеты внутри вашего рабочего пространства:
 ```bash
-. ~/catkin_ws/devel/setup.sh
+. ~/catkin_ws/devel/setup.bash
 ```
 > Система ROS может видеть только одно рабочее простанство, создание нескольких пространств и добавление в `rc`-файл не даст положительного результата
 
@@ -74,8 +74,8 @@ echo $ROS_PACKAGE_PATH
 ## В результате
 - В файле `~/.bashrc` содержится два пути:
 ```bash
-. /opt/ros/kinetic/setup.sh
-. ~/catkin_ws/devel/setup.sh
+. /opt/ros/kinetic/setup.bash
+. ~/catkin_ws/devel/setup.bash
 ```
 
 Первый настраивает пути для системных файлов ROS, второй настраивает ROS для поиска пакетов также и в нашем ws.
