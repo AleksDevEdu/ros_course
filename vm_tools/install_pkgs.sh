@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Manual install:
+# - Google chrome: https://www.google.com/intl/ru_ALL/chrome/
+# - Roboware: http://www.roboware.me/#/home
+
 # Sublime text 3 preinstall
 wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
 sudo apt-get install apt-transport-https
@@ -27,3 +31,7 @@ echo 'Set ROS rc variables'
 ROS_SETUP='source "/opt/ros/melodic/setup.bash"'
 ROS_RC_FILE=$HOME/.bashrc
 grep -qF -- "$ROS_SETUP" "$ROS_RC_FILE" || echo $ROS_SETUP >> $ROS_RC_FILE
+
+# Git postinstall
+git config --global user.name "ros-vm-user"
+git config --global user.email 'ros-vm-user@mail.ru'
