@@ -37,5 +37,13 @@ echo $ROS_DISTRO
 
 # ROS Utility list
 
+[T2]
 - roscd
 - rospack
+[T3]
+- roscore
+- rosrun
+- rosnode
+- rostopic
+- rosmsg
+- rqt_graph
