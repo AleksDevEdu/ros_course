@@ -117,4 +117,4 @@ roslaunch rospy_tutorials talker_listener.launch new_topic_name:=my_topic
 
 - Мы научились создавать launch-файлы.
 - Рассмотренные практики позволили также рассмотреть ряд тэгов, используемых в данном формате. Остальные тэги можно найти на [офф странице](http://wiki.ros.org/roslaunch/XML).
-- Познакоились с утилитами `roscat` и `roslaunch`.
+- Познакоились с утилитами `roslaunch`.

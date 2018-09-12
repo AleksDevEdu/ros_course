@@ -40,15 +40,13 @@ echo $ROS_DISTRO
 [T1]
 - catkin_make
 [T2]
-- roscd
+- rosbash (package)
 - rospack
 [T3]
 - roscore
-- rosrun
 - rosnode
 - rostopic
 - rosmsg
 - rqt_graph
 [T5]
-- roscat
 - roslaunch

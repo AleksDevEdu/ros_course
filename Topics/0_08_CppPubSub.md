@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 
   ros::NodeHandle n;
 
-  ros::Publisher pub = n.advertise<std_msgs::String>("cpp_topic", 1000);
+  ros::Publisher pub = n.advertise<std_msgs::String>("cpp_chatter", 1000);
 
   ros::Rate loop_rate(1);
 
@@ -48,63 +48,56 @@ int main(int argc, char **argv)
 Начинаем разбор c подключения заголовков ROS и сообщения `std_msgs/String`, а также заголовок функций формирования строк `sstream` ([информация о нем](http://www.cplusplus.com/reference/sstream/stringstream/)).
 ```cpp
 #include <ros/ros.h>
+/* Our case:     std_msgs/String     -> #include <std_msgs/String.h>      */
+/* Example:      geometry_msgs/Pose  -> #include <geometry_msgs/Pose.h>   */
 #include <std_msgs/String.h>
 
 #include <sstream>
 ```
 
 Далее производим подготовительный этап:
-- Регистрация узла
-
+- Регистрация узла, третий аргумент - имя регистрации узла в системе
 ```cpp
   ros::init(argc, argv, "cpp_talker");
 ```
 
 - Создание объекта [интерфейса узла](http://docs.ros.org/kinetic/api/roscpp/html/classros_1_1NodeHandle.html)
-
 ```cpp
   ros::NodeHandle n;
 ```
 
 - Регистрация топика `cpp_topic`, а также получение объекта публикации (заметьте, в тип шаблона передается тип сообщения). Вторым агргументом передается размер очереди сообщений
-
 ```cpp
-  ros::Publisher pub = n.advertise<std_msgs::String>("cpp_topic", 1000);
+  ros::Publisher pub = n.advertise<std_msgs::String>("cpp_chatter", 1000);
 ```
 
 - Создание объекта `Rate` для реализации частоты публикации
-
 ```cpp
   ros::Rate loop_rate(1);
 ```
 
-Ну а теперь немного о логике итерации цикла `while`:
-- Создаем объект сообщения (в c++ без этого никуда по сравнению с python)
-
+Ну а теперь немного о логике итерации цикла `while`, который проверяет условие завершения (`ros::ok()`):
+- Создаем объект сообщения
 ```cpp
     std_msgs::String msg;
 ```
 
 - Создаем объект строчного потока (он используется для формирования результирующей строки с использовани потоков)
-
 ```cpp
     std::stringstream ss;
 ```
 
 - С помощью потоков записываем фиксированную строку, а также значение счетчика
-
 ```cpp
     ss << "hello world " << count++;
 ```
 
 - Записываем полученную строку (функция `str()` строчного потока) в поле `data` нашего сообщения
-
-
 ```cpp
     msg.data = ss.str();
 ```
 
-После этого выводим в консоль данные, при этом используется `c_str()`, чтобы получить строку в формате С, так как `ROS_INFO()` - функция языка С.
+После этого выводим в консоль данные, при этом используется `c_str()`, чтобы получить строку в формате С, так как `ROS_INFO()` - аналог функции `printf()`.
 ```cpp
     ROS_INFO("%s", msg.data.c_str());
 ```
@@ -118,7 +111,7 @@ int main(int argc, char **argv)
     loop_rate.sleep();
 ```
 
-> В папке src пакета создайте файл talker.cpp и разместите в нем рассмотренный код, компиляцией займемся позже =)
+##### > В папке `src` пакета создайте файл `talker.cpp` и разместите в нем рассмотренный код, компиляцией займемся позже =)
 
 ## Cpp Subcriber
 
@@ -127,12 +120,9 @@ int main(int argc, char **argv)
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 
-/**
- * This tutorial demonstrates simple receipt of messages over the ROS system.
- */
-void topicCallback(const std_msgs::String::ConstPtr& msg)
+void topicCallback(const std_msgs::String& msg)
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+  ROS_INFO("I heard: [%s]", msg.data.c_str());
 }
 
 int main(int argc, char **argv)
@@ -141,7 +131,7 @@ int main(int argc, char **argv)
 
   ros::NodeHandle n;
 
-  ros::Subscriber sub = n.subscribe("cpp_topic", 1000, topicCallback);
+  ros::Subscriber sub = n.subscribe("cpp_chatter", 1000, topicCallback);
 
   ros::spin();
 
@@ -157,9 +147,16 @@ int main(int argc, char **argv)
 
 Создаем обработчик получения сообщений, в аргументе сидит ссылка на сообщение, пример доступа к полю сообщения представлен в примере. Обработчик выводит данные в сообщении в консоль.
 ```cpp
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
+/* 
+ * Аргумент callback-функции:
+ *   const - константная ссылка, чтобы мы не меняли содержание внутри этой функции
+ *   std_msgs::String - по типу топика
+ *   & - ссылка на полученное сообщение, фишка С++, вместо указателей
+ *   msg - название аргумента
+ */
+void chatterCallback(const std_msgs::String& msg)
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+  ROS_INFO("I heard: [%s]", msg.data.c_str());
 }
 ```
 
@@ -169,7 +166,7 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
 
   ros::NodeHandle n;
 
-  ros::Subscriber sub = n.subscribe("cpp_topic", 1000, topicCallback);
+  ros::Subscriber sub = n.subscribe("cpp_chatter", 1000, topicCallback);
 ```
 
 Вызов функции бесконечной обработки событий прихода сообщений через топик.
@@ -185,7 +182,7 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
   }
 ```
 
-> В папке src пакета создайте файл listener.cpp и разместите в нем рассмотренный код, компиляцией займемся уже скоро =)
+##### > В папке src пакета создайте файл listener.cpp и разместите в нем рассмотренный код, компиляцией займемся уже скоро =)
 
 ## Сборка пакета
 
@@ -201,7 +198,7 @@ set(TALKER_NODE_SRC  src/talker.cpp)
 
 Первый аргумент макроса `set` - название переменной, второй и дальнейшие (можно задавать целый список) - значение(-я).
 
-Далее указываем cmake о том, что мы планируем создавать исполняемый файл макросом `add_executable()`. В нем первый аргумент - название бинарного файла (который будет создан), второй - список файлов исходных текстов (как удачно совпало, что мы для этого определили переменную =)).
+Далее указываем cmake о том, что мы планируем создавать исполняемый файл макросом `add_executable()`. В нем первый аргумент - название бинарного файла (который будет создан), второй - список файлов исходных текстов (как удачно совпало, что мы для этого определили переменные!).
 ```cmake
 add_executable(${TALKER_NODE_NAME} ${TALKER_NODE_SRC})
 ```
@@ -217,7 +214,7 @@ add_dependencies(${TALKER_NODE_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catki
 target_link_libraries(${TALKER_NODE_NAME} ${catkin_LIBRARIES} )
 ```
 
-Как видно, во всех макросах используется имя бинарного файла.
+Как видно, во всех макросах используется имя бинарного файла (`TALKER_NODE_NAME`).
 
 На этом все, после написания данных строк в CMakeLists.txt можно перходить к компиляции. Еще раз приведу полный набор макросов для генерации узла `talker_cpp`
 ```cmake
@@ -240,15 +237,13 @@ rosrun study_pkg t[TAB]
 rosrun study_pkg talker_cpp
 ```
 
-> Попробуйте написать макросы для сборки узла `listener_cpp`. Хорошей практикой является выделение комментариями блоков для сборки конкретных узлов. За основу выделения можно взять присутствующие в CMakeLists.txt блоки типа build.
+##### > Дополните макросы для сборки узла `listener_cpp`. Хорошей практикой является выделение комментариями блоков для сборки конкретных узлов. За основу выделения можно взять присутствующие в CMakeLists.txt блоки типа build.
 
 ## Задачи
 
-> Напишите узел на С++, который через топики получает число, находит 3ю степень числа и высылает результат. Разберитесь в работе утилиты `rostopic` с командами `pub` и `echo`. Используя утилиту, в одном терминале подпишитесь на топик степеней чисел, а в другом отправляйте на входной топик вашего нового узла числа.
+##### > Напишите launch-файл для новых узлов `talker_cpp` и `listener_cpp`, запустите его, убедитесь, что все работает.
 
-> Напишите launch-файл для новых узлов `talker_cpp` и `listener_cpp`, запустите его, убедитесь, что все работает. В отдельном терминале запустите программу `rqt_graph`. Любуйтесь =)
-
-> Напишите launch-файл, в котором происходит запуск `talker_cpp` и `listener` (C++ -> Python). Не забудьте смапировать топики к единому имени или смапировать один из топиков к другом. Убедитесь, что все работает.
+##### > Напишите launch-файл, в котором происходит запуск `talker_cpp` и `listener` (C++ -> Python). Не забудьте смапировать топики к единому имени или смапировать один из топиков к другом. Убедитесь, что все работает.
 
 ## В результате
 
