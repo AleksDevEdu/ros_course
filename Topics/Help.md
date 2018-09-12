@@ -37,6 +37,8 @@ echo $ROS_DISTRO
 
 # ROS Utility list
 
+[T1]
+- catkin_make
 [T2]
 - roscd
 - rospack
@@ -47,3 +49,6 @@ echo $ROS_DISTRO
 - rostopic
 - rosmsg
 - rqt_graph
+[T5]
+- roscat
+- roslaunch
