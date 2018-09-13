@@ -28,7 +28,7 @@ def start_talker():
 try:
     start_talker()
 except (rospy.ROSInterruptException, KeyboardInterrupt):
-    print('Exception catched')
+    rospy.logerr('Exception catched')
 ```
 
 А теперь пошел разбор. Для начала, импортируем основной модуль `rospy` и модуль сообщения типа `std_msgs/String`. 
@@ -86,7 +86,7 @@ def start_talker():
 try:
     start_talker()
 except (rospy.ROSInterruptException, KeyboardInterrupt):
-    print('Exception catched')
+    rospy.logerr('Exception catched')
 ```
 
 

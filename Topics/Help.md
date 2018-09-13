@@ -50,3 +50,8 @@ echo $ROS_DISTRO
 - rqt_graph
 [T5]
 - roslaunch
+[T10]
+- rossrv
+- rosservice
+[T11]
+- rosparam
