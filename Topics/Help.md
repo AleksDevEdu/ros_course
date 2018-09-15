@@ -48,7 +48,7 @@ echo $ROS_DISTRO
 - rostopic
 - rosmsg
 - rqt_graph
-[T5]
+[T8]
 - roslaunch
 [T10]
 - rossrv
