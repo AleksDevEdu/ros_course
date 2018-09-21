@@ -1,7 +1,7 @@
 # Начало работы с ROS
 
 ## Требования
-- Установленный Libux дистрибутив (например [Ubuntu](http://releases.ubuntu.com/16.04/))
+- Установленный Linux дистрибутив (например [Ubuntu](http://releases.ubuntu.com/16.04/))
 - Установленный [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu)
 - Базовые знания Unix (при отсутствии - задавайте больше вопросов)
 - Готовность к изучению нового и интересного =)
