@@ -99,7 +99,7 @@ study_pkg /home/user/catkin_ws/src/study_pkg
 
 Можно глянуть как [инициализировать git с дальнейшими действиями](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/).
 
-> После каждой команды реоменду выполнять `git status`, чтобы видеть результат действий
+> После каждой команды `git *` рекомендую выполнять `git status`, чтобы видеть результат действий
 
 Теперь перейдем в папку пакета `study_pkg`:
 ```bash
@@ -113,6 +113,10 @@ git init
 Результат
 ```
 Initialized empty Git repository in /home/user/catkin_ws/src/study_pkg/.git/
+```
+Посмотрите состояние свежего репозитория командой:
+```bash
+gis status
 ```
 
 Теперь надо привязать локальный репозиторий к удаленному:
