@@ -141,6 +141,11 @@ git branch --set-upstream-to=origin/master master
 git pull
 ```
 
+Возможно потребуется стянуть файлы с указанием ветки:
+```bash
+git pull origin master
+```
+
 После этого можно учесть (индексировать) новые файлы пакета:
 ```bash
 git add -A
