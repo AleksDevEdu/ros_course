@@ -13,7 +13,7 @@ def callback(msg):
     rospy.loginfo("I heard %s", msg.data)
 
 rospy.init_node('listener')
-rospy.Subscriber('my_chat_topic', String, callback)
+rospy.Subscriber('my_chat_topic', String, callback, queue_size=10)
 rospy.spin()
 ```
 
@@ -30,7 +30,7 @@ def callback(msg):
 
 rospy.init_node('listener')
 # Не требуется сохранять объект подписки, возврат функции игнорируется
-rospy.Subscriber('my_chat_topic', String, callback)
+rospy.Subscriber('my_chat_topic', String, callback, queue_size=10)
 ```
 
 После остается лишь оставить узел работать до завершения системы ROS или прерывания узла (Ctrl+C). В момент регистрации подписки на топик узел уже готов принимать сообщения (прием происходит в отдельном потоке).  
