@@ -33,11 +33,13 @@ except (rospy.ROSInterruptException, KeyboardInterrupt):
 
 А теперь пошел разбор. Для начала, импортируем основной модуль `rospy` и модуль сообщения типа `std_msgs/String`. 
 ```python
+#!/usr/bin/env python
 import rospy
 # Our case:     std_msgs/String     -> from std_msgs.msg import String
 # Example:      geometry_msgs/Pose  -> from geometry_msgs.msg import Pose
 from std_msgs.msg import String
 ```
+> Строка `#!/usr/bin/env python` необходима для запуска, она сообщает системе о том, что данный файл необходимо запускать через интерпретатор `python`. 
 
 После этого необходимо зарегистрировать узел в системе ROS, а также зарегистрировать топик на публикацию с указанием имени, типа сообщения для топика и размера очереди.
 Первый аргумент функции `init_node()` задает название, которое будет зарегистрировано в рабочей экосистеме ROS.
