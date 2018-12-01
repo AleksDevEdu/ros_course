@@ -63,27 +63,30 @@ sudo ~/ros_course/vm_tools/proxy_off.sh
 
 # ROS Utility list
 
-[T1]
+[T0_1]
 - catkin_make
 
-[T2]
+[T0_2]
 - rosbash (package)
 - rospack
 
-[T3]
+[T0_3]
 - roscore
 - rosnode
 - rostopic
 - rosmsg
 - rqt_graph
 
-[T8]
+[T0_8]
 - roslaunch
 
-[T10]
+[T0_10]
 - rossrv
 - rosservice
 
-[T11]
+[T0_11]
 - rosparam
+
+[T1_4]
+- rosed
 
