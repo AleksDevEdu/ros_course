@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Start turtlebot Gazebo simulation -->
+  <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/>
+
+  <!-- Start Rviz with required views -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find study_pkg)/rviz/turtlebot.rviz" />
+
+  <!-- Start gmapping node -->
+  <include file="$(find study_pkg)/launch/gmapping.launch"/>
+</launch>
