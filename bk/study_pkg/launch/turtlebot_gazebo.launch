@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- GAZEBO -->
+
+	<!-- Аргумент названия файла мира (берем из пакета turtlebot_gazebo пока не создавали свой) -->
+	<!-- В комментариях закрыты варианты из пакета -->
+  <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/playground.world"/>
+  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/empty.world"/> -->
+  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/corridor.world"/> -->
+  
+  <!-- Аргумент включения GUI представления, иногда оно не нужно, проверим позже =) -->
+  <!-- Вынесено отдельным аргументом, чтобы можно было управлять при запуске скрипта -->
+  <arg name="gui" default="true"/>
+  
+  <!-- Стандартный запуск Gazebo - дальше нет смысла идти, здесь точка запуска Gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+  	<!-- Работа ведется не в реальном времени, а в симулируемом -->
+    <arg name="use_sim_time" value="true"/>
+    <!-- Отключим отладочную инфу - лишнее на данный момент -->
+    <arg name="debug" value="false"/>
+    <!-- Включим/отключим GUI в завимиости от того, что имеет аргумент -->
+    <arg name="gui" value="$(arg gui)" />
+    <!-- А вот здесь указываем мир, который хотим запустить -->
+    <arg name="world_name" value="$(arg world_file)"/>
+  </include>
+
+  <!-- TURTLEBOT -->
+
+  <!-- Вот здесь самый сок и происходит, задаем аргумент, который потом передадим в `robot_description` -->
+  <!-- Подставим жесткое описание из файла `kobuki_hexagons_kinect.urdf.xacro` -->
+  <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find turtlebot_description)/robots/kobuki_hexagons_kinect.urdf.xacro'" />
+  <!-- Настраиваем параметр `robot_description`, который будет нашим описанием робота -->
+  <param name="robot_description" command="$(arg urdf_file)" />
+  
+  <!-- Вызываем узел `spawn_model`, который делает всю работу! -->
+  <!-- Он из параметра `robot_description` создает представление робота! -->
+  <node name="spawn_turtlebot_model" pkg="gazebo_ros" type="spawn_model"
+        args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model mobile_base"/>
+  
+  <!-- Опубликуем TF преобразования на основе описания `robot_description` -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node>
+
+  <!-- Запускаем преобразование из RGBD изображения в LaserScan -->
+	<node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan">
+    <!-- То, какую высоту учитывать присплющивании точек в линию -->
+    <param name="scan_height" value="10"/>
+    <!-- Название TF СК, которая будет считаться СК для псевдолидара -->
+    <param name="output_frame_id" value="/camera_depth_frame"/>
+    <!-- Минимальная дистанция для скана -->
+    <param name="range_min" value="0.45"/>
+    <!-- Исходное изображение с каналом Depth (цвет нас все таки не интересует) -->
+    <!-- На этот топик подписываемся -->
+    <remap from="image" to="/camera/depth/image_raw"/>
+    <!-- Этот топик публикуется как результат -->
+    <remap from="scan" to="/scan"/>
+  </node>
+</launch>
