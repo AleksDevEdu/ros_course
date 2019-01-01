@@ -231,6 +231,8 @@ roslaunch turtlebot_teleop keyboard_teleop.launch
 
 # Gazebo Turtlebot Mapping - Better, Faster, Stronger
 
+> Для дальнейшей работы требуется установить метод RTABmap командой `sudo apt install ros-kinetic-rtabmap-ros`.
+
 Продолжая тему построения карты, важно упомянуть, что рассмотренный метод `gmapping` является методом работы с `LaserScan`, что делает его не очень выгодным для случая работы с кинектом, который стоит на черепашке. Поэтому в этом топике коснемся метода [`rtabmap`](http://wiki.ros.org/rtabmap_ros), который является методом работы с `RGB-D` данными (RGB картинка с дополнительным измерением глубины). К коллайдеру!
 
 Нет времени объяснять, пишем запуск узла построения карты `rtabmap.launch`:
