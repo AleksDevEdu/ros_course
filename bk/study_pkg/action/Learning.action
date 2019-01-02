@@ -1,0 +1,10 @@
+# Define the goal
+float32 target_accuracy
+---
+# Define the result
+float32 result_accuracy
+uint32  step_count
+---
+# Define a feedback message
+float32 current_accuracy
+uint32  step_number
