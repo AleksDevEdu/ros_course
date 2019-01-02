@@ -35,7 +35,7 @@ find_package(
     ... 
     actionlib_msgs
     actionlib
-    genmsg
+    message_generation
 )
 
 add_action_files(
