@@ -5,7 +5,7 @@
   <arg name="initial_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" />
 
   <!-- Аргумент, который содержит имя файла -->
-  <arg name="urdf_file" default="$(find study_pkg)/descriptions/my_robot.urdf" />
+  <arg name="urdf_file" default="$(find my_super_car_description)/urdf/model.urdf.xacro" />
   
   <!-- Настраиваем параметр `robot_description`, который будет нашим описанием робота -->
   <!-- Прогоняем через узел xacro, который произведет обработку файла, остальной функционал увидим позже -->
@@ -19,8 +19,10 @@
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
 
   <!-- Опубликуем TF динамические преобразования на основе описания `robot_description` -->
-  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" >
+    <param name="use_gui" value="true" />
+  </node>
 
   <!-- Просто запустим rviz, после настройки добавим запуск конфигурации -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find study_pkg)/rviz/my_robot.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find my_super_car_description)/rviz/model_view.rviz" />
 </launch>

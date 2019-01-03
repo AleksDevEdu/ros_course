@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+
+
+<robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="wheel_width" value="0.05" />
+  <xacro:property name="wheel_radius" value="0.1" />
+
+  <!-- https://github.com/jbpassot/ackermann_vehicle/blob/master/ackermann_vehicle_description/urdf/em_3905.urdf.xacro -->
+  <xacro:property name="degrees_45" value="0.785398163"/>
+  <xacro:property name="degrees_90" value="1.57079633"/>
+
+  <xacro:property name="servo_stall_torque" value="0.5649"/>
+  <xacro:property name="servo_no_load_speed" value="4.553"/>
+
+  <xacro:macro name="wheel_object" params="name">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <geometry>
+          <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+        </geometry>
+      </visual>
+    </link>
+  </xacro:macro>
+
+
+  <xacro:macro name="steering_wheel" params="name chassis_name xyz ">
+    <link name="${name}_base"/>
+
+    <joint name="${name}_steering_joint" type="revolute">
+      <limit lower="${-degrees_45}" upper="${degrees_45}" effort="${servo_stall_torque}" velocity="${servo_no_load_speed}"/>
+      <parent link="${chassis_name}"/>
+      <child link="${name}_base"/>
+      <origin xyz="${xyz}" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+
+    <xacro:wheel_object name="${name}" />
+
+    <joint name="${name}_rotate_joint" type="continuous">
+      <parent link="${name}_base"/>
+      <child link="${name}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+  </xacro:macro>
+
+
+  <xacro:macro name="traveling_wheel" params="name chassis_name xyz ">
+
+    <xacro:wheel_object name="${name}" />
+    
+    <joint name="${name}_rotate_joint" type="continuous">
+      <parent link="${chassis_name}"/>
+      <child link="${name}"/>
+      <origin xyz="${xyz}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+  </xacro:macro>
+
+<!--   <link name="link1">
+    <collision>
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+      <geometry>
+        <box size="1 1 2"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+      <geometry>
+        <box size="1 1 2"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+  </link>
+ -->
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.6 0.4 0.1"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <xacro:steering_wheel name="right_steer_wheel" chassis_name="base_link" xyz="0.25 -0.25 0" />
+  <xacro:steering_wheel name="left_steer_wheel" chassis_name="base_link" xyz="0.25 0.25 0" />
+
+  <xacro:traveling_wheel name="right_travel_wheel" chassis_name="base_link" xyz="-0.25 -0.25 0" />
+  <xacro:traveling_wheel name="left_travel_wheel" chassis_name="base_link" xyz="-0.25 0.25 0" />
+
+
+</robot>
