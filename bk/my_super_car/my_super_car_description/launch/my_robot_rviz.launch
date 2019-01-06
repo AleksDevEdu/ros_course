@@ -35,6 +35,7 @@
   <arg name="rviz_gui" default="false" />
   <!-- Запускаем Gazebo, мир пустой - стандартный -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- <arg name="world_name" value="$(find my_super_car_description)/worlds/skidpan.world"/> -->
     <arg name="use_sim_time" value="true"/>
     <arg name="debug" value="false"/>
     <arg name="gui" value="$(arg gz_gui)" />

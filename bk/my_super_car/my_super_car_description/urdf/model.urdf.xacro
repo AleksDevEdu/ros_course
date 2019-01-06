@@ -3,25 +3,30 @@
 
 <robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:property name="wheel_width" value="0.05" />
-  <xacro:property name="wheel_radius" value="0.1" />
+  <xacro:property name="wheel_width" value="0.0889" />
+  <xacro:property name="wheel_radius" value="0.073" />
   <xacro:property name="wheel_mass" value="0.29" />
 
-  <xacro:property name="wheel_chassis_bias" value="0.05" />
+  <xacro:property name="wheel_chassis_bias" value="${wheel_width/2 + 0.01}" />
 
+  <xacro:property name="chassis_mass" value="3.7" />
+  <xacro:property name="chassis_length" value="0.258" />
+  <xacro:property name="chassis_width" value="0.168" />
+  <xacro:property name="chassis_height" value="0.01" />
 
-  <xacro:property name="chassis_mass" value="2.7" />
-  <xacro:property name="chassis_length" value="0.6" />
-  <xacro:property name="chassis_width" value="0.4" />
-  <xacro:property name="chassis_height" value="0.1" />
-
-  <xacro:property name="wheelbase" value="0.5" />
+  <xacro:property name="wheelbase" value="0.335" />
 
   <!-- https://github.com/jbpassot/ackermann_vehicle/blob/master/ackermann_vehicle_description/urdf/em_3905.urdf.xacro -->
   <xacro:property name="degrees_45" value="0.785398163"/>
   <xacro:property name="degrees_90" value="1.57079633"/>
 
-  <xacro:property name="servo_stall_torque" value="0.5649"/>
+  <!-- ~0.5 rad -->
+  <xacro:property name="degrees_30" value="${pi/3}"/>
+
+  <xacro:property name="wheel_turn_limit" value="${degrees_30}"/>
+
+  <!-- <xacro:property name="servo_stall_torque" value="0.5649"/> -->
+  <xacro:property name="servo_stall_torque" value="100"/>
   <xacro:property name="servo_no_load_speed" value="4.553"/>
 
   <!-- INERTIAL MACROS -->
@@ -48,13 +53,13 @@
   </xacro:macro>
 
   <xacro:macro name="solid_cylinder_inertial"
-               params="radius height mass *origin">
+               params="r h mass *origin">
     <inertial>
       <xacro:insert_block name="origin"/>
       <mass value="${mass}"/>
-      <inertia ixx="${mass / 12 * (3 * radius * radius + height * height)}" ixy="0.0" ixz="0.0"
-               iyy="${mass / 12 * (3 * radius * radius + height * height)}" iyz="0.0"
-               izz="${mass / 2 * radius * radius}" />
+      <inertia ixx="${mass / 12 * (3 * r * r + h * h)}" ixy="0.0" ixz="0.0"
+               iyy="${mass / 12 * (3 * r * r + h * h)}" iyz="0.0"
+               izz="${mass / 2 * r * r}" />
     </inertial>
   </xacro:macro>
   <!-- INERTIAL MACROS END -->
@@ -74,12 +79,19 @@
         </geometry>
       </collision>
       <xacro:solid_cylinder_inertial
-          radius="${wheel_radius}" height="${wheel_width}"
+          r="${wheel_radius}" h="${wheel_width}"
           mass="${wheel_mass}" >
         <origin xyz="0 0 0" rpy="0 0 0" />
       </xacro:solid_cylinder_inertial>
     </link>
     <gazebo reference="${name}">
+      <mu1>1.2</mu1>
+      <mu2>1.05</mu2>
+      <kp>10000000</kp>
+      <kd>1</kd> 
+      <minDepth>0.01</minDepth>
+      <maxVel>10.0</maxVel> 
+
       <material>Gazebo/Black</material>
     </gazebo>
   </xacro:macro>
@@ -94,7 +106,7 @@
       <axis xyz="0 0 -1"/>
     </joint>
 
-    <transmission name="${name}_rotate_trans">
+<!--     <transmission name="${name}_rotate_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${name}_rotate_joint">
         <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
@@ -102,7 +114,7 @@
       <actuator name="${name}_rotate_motor">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission>
+    </transmission> -->
   </xacro:macro>
 
   <xacro:macro name="steering_wheel" params="name base_name xyz ref">
@@ -111,7 +123,7 @@
     </link>
 
     <joint name="${name}_steering_joint" type="revolute">
-      <limit lower="${-degrees_45}" upper="${degrees_45}" 
+      <limit lower="${-wheel_turn_limit}" upper="${wheel_turn_limit}" 
              effort="${servo_stall_torque}" velocity="${servo_no_load_speed}"/>
       <parent link="${base_name}"/>
       <child link="${name}_base"/>
@@ -129,7 +141,27 @@
       </actuator>
     </transmission>
 
-    <xacro:traveling_wheel name="${name}" base_name="${name}_base" xyz="0 ${ref * wheel_chassis_bias} 0" />
+    <!-- <xacro:traveling_wheel name="${name}" base_name="${name}_base" xyz="0 ${ref * wheel_chassis_bias} 0" /> -->
+    <!-- <xacro:traveling_wheel name="${name}" base_name="${name}_base" xyz="0 0 0" /> -->
+
+    <xacro:wheel_object name="${name}" />
+    
+    <joint name="${name}_rotate_joint" type="continuous">
+      <parent link="${name}_base"/>
+      <child link="${name}"/>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+      <axis xyz="0 0 -1"/>
+    </joint>
+
+    <transmission name="${name}_rotate_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${name}_rotate_joint">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${name}_rotate_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
   </xacro:macro>
 <!-- 
   <link name="base_footage">
@@ -165,12 +197,17 @@
     <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
   </joint>
  -->
+<!-- 
+  <xacro:steering_wheel name="right_steer_wheel" base_name="base_link" xyz="${wheelbase/2} ${-chassis_width/2} 0" ref="-1" />
+  <xacro:steering_wheel name="left_steer_wheel" base_name="base_link" xyz="${wheelbase/2} ${chassis_width/2} 0" ref="1" />
+ -->
+  <xacro:steering_wheel name="right_steer_wheel" base_name="base_link" xyz="${wheelbase/2} ${-(chassis_width/2 + wheel_chassis_bias)} 0" ref="-1" />
+  <xacro:steering_wheel name="left_steer_wheel" base_name="base_link" xyz="${wheelbase/2} ${(chassis_width/2 + wheel_chassis_bias)} 0" ref="1" />
 
-  <xacro:steering_wheel name="right_steer_wheel" base_name="base_link" xyz="${wheelbase/2} -0.2 0" ref="-1" />
-  <xacro:steering_wheel name="left_steer_wheel" base_name="base_link" xyz="${wheelbase/2} 0.2 0" ref="1" />
-
-  <xacro:traveling_wheel name="right_travel_wheel" base_name="base_link" xyz="${-wheelbase/2} -0.25 0" />
-  <xacro:traveling_wheel name="left_travel_wheel" base_name="base_link" xyz="${-wheelbase/2} 0.25 0" />
+  <xacro:traveling_wheel name="right_travel_wheel" base_name="base_link" 
+                         xyz="${-wheelbase/2} ${-(chassis_width/2 + wheel_chassis_bias)} 0" />
+  <xacro:traveling_wheel name="left_travel_wheel" base_name="base_link" 
+                         xyz="${-wheelbase/2} ${(chassis_width/2 + wheel_chassis_bias)} 0" />
 
   <!-- Gazebo plugin for ROS Control -->
   <gazebo>
