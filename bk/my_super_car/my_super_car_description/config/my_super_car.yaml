@@ -25,6 +25,7 @@ ackermann_drive_controller:
   spinning_joints: ['right_steer_wheel_rotate_joint',
                     'left_steer_wheel_rotate_joint']
 
+  # First - right, second - left!
   steering_joints: ['right_steer_wheel_steering_joint',
                     'left_steer_wheel_steering_joint']
 
@@ -34,6 +35,7 @@ ackermann_drive_controller:
   # odometry_joints: ['right_travel_wheel_rotate_joint',
                     # 'left_travel_wheel_rotate_joint']
 
+  wheel_track: 0.26
   wheelbase: 0.335
 
   # Odometry covariances for the encoder output of the robot. These values should
