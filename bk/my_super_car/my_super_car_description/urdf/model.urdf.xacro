@@ -3,18 +3,18 @@
 
 <robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:property name="wheel_width" value="0.08" />
-  <xacro:property name="wheel_radius" value="0.07" />
-  <xacro:property name="wheel_mass" value="0.29" />
+  <xacro:property name="wheel_width" value="0.03" />
+  <xacro:property name="wheel_radius" value="0.04" />
+  <xacro:property name="wheel_mass" value="0.3" />
 
   <xacro:property name="wheel_chassis_bias" value="${wheel_width/2}" />
 
   <xacro:property name="chassis_mass" value="3.7" />
-  <xacro:property name="chassis_length" value="0.258" />
-  <xacro:property name="chassis_width" value="0.18" />
+  <xacro:property name="chassis_length" value="0.485" />
+  <xacro:property name="chassis_width" value="0.227" />
   <xacro:property name="chassis_height" value="0.01" />
 
-  <xacro:property name="wheelbase" value="0.335" />
+  <xacro:property name="wheelbase" value="0.3" />
 
   <!-- https://github.com/jbpassot/ackermann_vehicle/blob/master/ackermann_vehicle_description/urdf/em_3905.urdf.xacro -->
   <xacro:property name="degrees_45" value="0.785398163"/>

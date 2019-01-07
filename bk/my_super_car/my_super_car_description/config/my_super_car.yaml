@@ -35,8 +35,8 @@ ackermann_drive_controller:
   # odometry_joints: ['right_travel_wheel_rotate_joint',
                     # 'left_travel_wheel_rotate_joint']
 
-  wheel_track: 0.26
-  wheelbase: 0.335
+  wheel_track: 0.287
+  wheelbase: 0.3
 
   # Odometry covariances for the encoder output of the robot. These values should
   # be tuned to your robot's sample odometry data, but these values are a good place
