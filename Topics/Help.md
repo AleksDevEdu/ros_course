@@ -51,15 +51,7 @@ echo $ROS_DISTRO
 
 ## Как настроить прокси в университете ЛЭТИ?
 
-В папке с репозиторием `ros_course/vm_tools` есть скрипт `proxy_leti.sh`. Его выполнение с правами админа (команда `sudo` - потребует пароль) настраивает систему и `git` на стандартный прокси:
-```bash
-sudo ~/ros_course/vm_tools/proxy_leti.sh
-```
-
-Для отключения:
-```bash
-sudo ~/ros_course/vm_tools/proxy_off.sh
-```
+Скрипты для включения/отключения можно найти [здесь](https://gist.github.com/KaiL4eK/1c4b4f5581877cbd635c23594433d42b).
 
 # ROS Utility list
 
