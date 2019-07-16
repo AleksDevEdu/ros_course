@@ -4,10 +4,15 @@
 # - Google chrome: https://www.google.com/intl/ru_ALL/chrome/
 # - Roboware: http://www.roboware.me/#/home
 
+sudo apt install software-properties-common apt-transport-https wget
+
 # Sublime text 3 preinstall
 wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-sudo apt-get install apt-transport-https
 echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+
+# VSCode preinstall
+wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
 
 # ROS preinstall
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
@@ -15,9 +20,12 @@ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C
 
 # Install everything
 sudo apt update
-sudo apt install -y git \
-					sublime-text \
-					ros-melodic-desktop-full python-rosinstall python-rosinstall-generator python-wstool build-essential \
+sudo apt install -y git code sublime-text \
+					ros-kinetic-desktop-full \
+					python-rosinstall \
+					python-rosinstall-generator \
+					python-wstool \
+					build-essential
 
 # ROS postinstall
 ROS_DEP_SRC_FILE="/etc/ros/rosdep/sources.list.d/20-default.list"
