@@ -1,6 +1,7 @@
 # Начало работы с ROS
 
 > [Ссылка на YouTube-видео Introduction](https://www.youtube.com/watch?v=bhDyZlIxaz0&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=10&t=8s)
+
 > [Ссылка на YouTube-видео Цели курса](https://www.youtube.com/watch?v=yOLnIvn2rP0&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=2&t=0s)
 
 ## Требования
