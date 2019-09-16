@@ -1,8 +1,11 @@
 # Начало работы с ROS
 
+> [Ссылка на YouTube-видео Introduction](https://www.youtube.com/watch?v=bhDyZlIxaz0&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=10&t=8s)
+> [Ссылка на YouTube-видео Цели курса](https://www.youtube.com/watch?v=yOLnIvn2rP0&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=2&t=0s)
+
 ## Требования
-- Установленный Linux дистрибутив (например [Ubuntu](http://releases.ubuntu.com/16.04/))
-- Установленный [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu)
+- Установленный Linux дистрибутив (например [Ubuntu](http://releases.ubuntu.com/18.04/))
+- Установленный [ROS Melodic](http://wiki.ros.org/melodic/Installation/Ubuntu)
 - Базовые знания Unix (при отсутствии - задавайте больше вопросов)
 - Готовность к изучению нового и интересного =)
 
@@ -16,17 +19,17 @@ source /opt/ros/[distro]/setup.bash
 ```
 Для нашего случая:
 ```bash
-source /opt/ros/kinetic/setup.bash
+source /opt/ros/melodic/setup.bash
 ```
 или
 ```bash
-. /opt/ros/kinetic/setup.bash
+. /opt/ros/melodic/setup.bash
 ```
 > Подробнее про команды `.` и `source` написано в [хелпе](Help.md).
 
 Для того, чтобы настраивать ROS автоматически при создании сессий (открытии терминала), необходимо прописать
 ```bash
-. /opt/ros/kinetic/setup.bash
+. /opt/ros/melodic/setup.bash
 ```
 в конец файла `~/.bashrc`. 
 
@@ -34,7 +37,7 @@ source /opt/ros/kinetic/setup.bash
 
 Можно просто прописать строку в конец файла командой:
 ```bash
-echo ". /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+echo ". /opt/ros/melodic/setup.bash" >> ~/.bashrc
 ```
 
 > Символ `>>` означает "добавить в конец файла" ("append to the end").
@@ -53,7 +56,7 @@ subl ~/.bashrc
 ```bash
 echo $ROS_DISTRO
 ```
-Значение должно быть `kinetic`.
+Значение должно быть `melodic`.
 
 > Символ '$' читает значение переменной окружения. Без него команда `echo ROS_DISTRO` просто выведет строку `ROS_DISTRO`.
 
@@ -101,7 +104,7 @@ echo $ROS_PACKAGE_PATH
 ```
 В появившемся результате должен находиться путь до созданного рабочего простанства, а также путь до системного рабочего пространства. То есть, строка должна содержать результат похожий на 
 ```bash
-/home/user/catkin_ws/src:/opt/ros/kinetic/share
+/home/user/catkin_ws/src:/opt/ros/melodic/share
 ```
 
 > Часто переменные окружения содержат список путей. А разделителем списка является символ '`:`'.
@@ -113,7 +116,7 @@ echo $ROS_PACKAGE_PATH
 ## В результате
 - В файле `~/.bashrc` содержится два пути:
 ```bash
-. /opt/ros/kinetic/setup.bash
+. /opt/ros/melodic/setup.bash
 . ~/catkin_ws/devel/setup.bash
 ```
 
