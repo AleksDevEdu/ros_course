@@ -1,5 +1,13 @@
 # ROS пакеты
 
+> [Ссылка на YouTube-видео - Принципы построения систем](https://www.youtube.com/watch?v=OsS_PGhZMvc&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=2)
+
+> [Ссылка на YouTube-видео - Пакеты в ROS](https://www.youtube.com/watch?v=Fw4z72Pr0Sk&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=3)
+
+> [Ссылка на YouTube-видео - Почему ROS крут](https://www.youtube.com/watch?v=Fw4z72Pr0Sk&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=3)
+
+> [Ссылка на YouTube-видео - Почему ROS это OS?](https://www.youtube.com/watch?v=nOhdbEy8Oa4&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=4)
+
 Вся экосистема ROS основывается на концепции пакетов, которые включают различные компоненты. В этом топике мы знакомимся с возможностями создания пакетов, их редактирования, а также c инструментом сборки, который будет использоваться далее. Можно также подглядеть на [офф страницу =)](http://wiki.ros.org/ROS/Tutorials/CreatingPackage).
 
 > Убедитесь, что ваша среда настроена, ваш ws инициализирован и виден в системе ROS. (см. предыдущий топик 0_01)
@@ -95,7 +103,7 @@ study_pkg /home/user/catkin_ws/src/study_pkg
 
 ## Разместим новый пакет в репозиторий
 
-Для начала необходимо создать пустой репозиторий на github.com в своем аккаунте. Если чего-то не хватает - разбираемся вместе или по инструкциям из веба, их благо достаточно. Например, [такое](https://github.com/serykhelena/Guides/blob/windows_os/git_install.md) (= 
+Для начала необходимо создать пустой репозиторий на github.com в своем аккаунте. Если чего-то не хватает - разбираемся вместе или по инструкциям из веба, их благо достаточно. Например, [такое](https://github.com/serykhelena/Guides/blob/master/windows_os/git_install.md) (= 
 
 Можно глянуть как [инициализировать git с дальнейшими действиями](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/).
 
@@ -171,6 +179,12 @@ Omit --global to set the identity only in this repository.
 ```bash
 git push
 ```
+
+Если при связывании локального и удалённого репозиториев Git не смог найти удалённую ветку мастера, то используйте команду 
+```bash
+git push --det-upstream origin master
+```
+чтобы однозначно указать ему, что делать. 
 
 > Для выполнения данной команды может потребоваться ввод имя пользователя и пароль.
 
