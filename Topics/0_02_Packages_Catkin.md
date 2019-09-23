@@ -6,6 +6,8 @@
 
 > [Ссылка на YouTube-видео - Почему ROS это OS?](https://www.youtube.com/watch?v=nOhdbEy8Oa4&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=4)
 
+> [Google-презентация (слайды 10 - 25)](https://docs.google.com/presentation/d/1_jMoyNbstYQhdgVDTDNq7cwlQysoJzk2lRDcBLCoJfQ/edit#slide=id.g7040ccc9da0ddacf_0)
+
 Вся экосистема ROS основывается на концепции пакетов, которые включают различные компоненты. В этом топике мы знакомимся с возможностями создания пакетов, их редактирования, а также c инструментом сборки, который будет использоваться далее. Можно также подглядеть на [офф страницу =)](http://wiki.ros.org/ROS/Tutorials/CreatingPackage).
 
 > Убедитесь, что ваша среда настроена, ваш ws инициализирован и виден в системе ROS. (см. предыдущий топик 0_01)

@@ -2,6 +2,8 @@
 
 > [Ссылка на YouTube-видео - Topics vs Services](https://www.youtube.com/watch?v=Uyh8otwQLsI&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=8)
 
+> [Google-презентация (слайды 1 - 4)](https://docs.google.com/presentation/d/1eUkYZY5Bu6ioSfEmm5pyLeLaD0AQtegd/edit#slide=id.p4)
+
 На данный момент было рассмотрено много нового и предлагается немного порассуждать о том, что имеется на данный момент, а также рассмотреть еще один метод коммуникации между узлами - сервисы.
 
 В помощь подойдут ссылки о [сервисах](http://wiki.ros.org/Services) и о том, как их писать на [Python](http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29) и [C++](http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29). Также отсюда мы научимся [создавать свои типы сервисов](http://wiki.ros.org/ROS/Tutorials/CreatingMsgAndSrv).

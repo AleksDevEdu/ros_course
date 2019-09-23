@@ -2,6 +2,8 @@
 
 > [Ссылка на YouTube-видео - Имена узлов](https://www.youtube.com/watch?v=8xMr3legBoI&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=6)
 
+> [Google-презентация (слайды 5 - 7)](https://docs.google.com/presentation/d/1dAujwqXbiVhfxTfEow039pG2TtA19IUhpYOKfDjma68/edit#slide=id.g43adc50189_0_0)
+
 Данная тема определяет важные аспекты, связанные с организацией системы при работе с узлами и топиками. Относительно данной темы можно сослаться на офф страницу о [именах](http://wiki.ros.org/Names), а также к странице о [мапировании](http://wiki.ros.org/Remapping%20Arguments).
 
 ## Node name
