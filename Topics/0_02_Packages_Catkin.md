@@ -4,8 +4,6 @@
 
 > [Ссылка на YouTube-видео - Пакеты в ROS](https://www.youtube.com/watch?v=Fw4z72Pr0Sk&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=3)
 
-> [Ссылка на YouTube-видео - Почему ROS крут](https://www.youtube.com/watch?v=Fw4z72Pr0Sk&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=3)
-
 > [Ссылка на YouTube-видео - Почему ROS это OS?](https://www.youtube.com/watch?v=nOhdbEy8Oa4&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=4)
 
 Вся экосистема ROS основывается на концепции пакетов, которые включают различные компоненты. В этом топике мы знакомимся с возможностями создания пакетов, их редактирования, а также c инструментом сборки, который будет использоваться далее. Можно также подглядеть на [офф страницу =)](http://wiki.ros.org/ROS/Tutorials/CreatingPackage).
