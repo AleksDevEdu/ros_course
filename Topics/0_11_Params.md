@@ -1,6 +1,6 @@
 # ROS параметры
 
-> [Google-презентация (слайд 5)](https://docs.google.com/presentation/d/1eUkYZY5Bu6ioSfEmm5pyLeLaD0AQtegd/edit#slide=id.p4)
+> [Google-презентация (слайд 5)](https://docs.google.com/presentation/d/1eUkYZY5Bu6ioSfEmm5pyLeLaD0AQtegd/edit#slide=id.p5)
 
 Есть еще один аспект, который называется [__сервер параметров__](http://wiki.ros.org/Parameter%20Server).
 
@@ -40,7 +40,7 @@ rosparam list
 rosparam get /rosdistro
 ```
 ```
-kinetic
+melodic
 ```
 Ожидаемый вывод, не так ли?)
 
@@ -313,7 +313,7 @@ rosparam list
 Формат <имя параметра> : <значение> - это специальный формат файлов `YAML`. Для массивов и вложенных параметров происходит обертка вложенности скобками `{}` или просто новой строкой и внутри по идентичному принципу.
 ```yaml
 ros_glob_param: Hi, I am global =)
-rosdistro: 'kinetic'
+rosdistro: 'melodic'
 roslaunch:
   uris: {host_user_vb__38669: 'http://user-vb:38669/'}
 run_id: 1b078410-b789-11e8-91b9-0800278832b1
@@ -332,7 +332,7 @@ sample_ns:
 bool getParam (const std::string& key, parameter_type& output_value) const;
 ```
 
-Функция получает значение параметра по переданному ключу (имени параметра). `parameter_type` соответствует типу значения параметра (`string`, `bool`, `int`, `double`). Есть еще специальный тип `XmlRpcValue`, но его рассморение не та важно и может быть рассмотрено из [документации](http://docs.ros.org/kinetic/api/xmlrpcpp/html/classXmlRpc_1_1XmlRpcValue.html). Возвращает функция `true`, если параметр был удачно получен, и `false`, если параметр не удалось получить (не существует, например). Пример получения параметра:
+Функция получает значение параметра по переданному ключу (имени параметра). `parameter_type` соответствует типу значения параметра (`string`, `bool`, `int`, `double`). Есть еще специальный тип `XmlRpcValue`, но его рассморение не так важно и может быть рассмотрено из [документации](http://docs.ros.org/kinetic/api/xmlrpcpp/html/classXmlRpc_1_1XmlRpcValue.html). Возвращает функция `true`, если параметр был удачно получен, и `false`, если параметр не удалось получить (не существует, например). Пример получения параметра:
 ```cpp
     std::string s;
     if (n.getParam("my_param", s))
