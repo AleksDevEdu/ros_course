@@ -2,7 +2,7 @@
 
 > [Ссылка на YouTube-видео - Topics vs Services](https://www.youtube.com/watch?v=Uyh8otwQLsI&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=8)
 
-> [Google-презентация (слайды 1 - 4)](https://docs.google.com/presentation/d/1eUkYZY5Bu6ioSfEmm5pyLeLaD0AQtegd/edit#slide=id.p4)
+> [Google-презентация (слайды 3 - 4)](https://docs.google.com/presentation/d/1eUkYZY5Bu6ioSfEmm5pyLeLaD0AQtegd/edit#slide=id.p3)
 
 На данный момент было рассмотрено много нового и предлагается немного порассуждать о том, что имеется на данный момент, а также рассмотреть еще один метод коммуникации между узлами - сервисы.
 

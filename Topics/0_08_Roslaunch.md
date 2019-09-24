@@ -2,7 +2,7 @@
 
 > [Ссылка на YouTube-видео - Launch-система в ROS](https://www.youtube.com/watch?v=HcF6AqKo0Bc&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=7)
 
-> [Google-презентация](https://docs.google.com/presentation/d/14PDlJC09FDqrx-PXmn-Be7SDopk3GmdYSLuyv_PpNzA/edit#slide=id.p4)
+> [Google-презентация](https://docs.google.com/presentation/d/14PDlJC09FDqrx-PXmn-Be7SDopk3GmdYSLuyv_PpNzA/edit#slide=id.p1)
 
 Запуск узлов в большом количестве скорее всего потребует соответствующего количества терминалов + 1 (для мастера). В реальных системах может присутствовать 10, 20 и более узлов, что может вызвать огромную боль при включении/выключении/проверке всех узлов.
 
