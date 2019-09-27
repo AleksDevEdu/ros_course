@@ -1,17 +1,10 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- Start turtlebot Gazebo simulation -->
-    <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch">
+    <include file="$(find study_pkg)/launch/tb3_gazebo_start.launch">
     </include>
 
-    <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find study_pkg)/rviz/tb3_scan_tf.rviz"/>
 
-    <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
-      <arg name="model" value="$(arg model)"/>
-    </include>
-
-
-    <!-- Start teleop -->
-    <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch">
-    </include>
+    <node pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="turtlebot3_teleop_keyboard" output="screen">
+    </node>
 </launch>

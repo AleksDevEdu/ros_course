@@ -2,480 +2,228 @@
 
 Позволю себе предположить, что вам не очень понятно, как мы запускаем робота, что для этого нужно сделать, если мы хотим создать и запустить свой прототип... Пока мы пользовались готовыми решениями, мы подошли к тому, что пора бы уже и эту область раскопать =)
 
-> Спойлер, там не так все сложно!
+> Спойлер, там не так все сложно! А еще наша задача - развернуть launch скрипты и сделать все максимально удобно для наших задач!
 
-Давайте вспомним, какая часть в нашем `start_turtlebot_sim.launch` отвечает за запуск робота:
+Давайте вспомним, какая часть в нашем `tb3_gz_keyboard.launch`/`tb3_gz_keyboard_slam.launch` отвечает за запуск робота и управление с клавиатуры:
 ```xml
-  <!-- Start turtlebot Gazebo simulation -->
-  <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/>
+    <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch">
+    </include>
+
+    <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
+    ...
+    </include>
+
+    <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch">
+    </include>
 ```
 
-Все остальное в нашем скрипте мы написали сами (ну как, взяты примеры настроек, тем не менее мы напрямую управляем стандартными узлами ROS, а в этом случае мы используем какой-то launch-файл для быстрого старта!
+> Сейчас наша задача - написать launch скрипт, который будет запускать Gazebo по исходным файлам, создавать робота по описанию и базовым файлам, а не после переиспользования через 5й пакет. И не забываем про переменную окружения `TURTLEBOT3_MODEL`, от нее бы тоже избавиться.
 
-> В данном топике мы разберем данную строку как можно подробнее, чтобы получить первое понимание дела. Аналогично мы будем делать при создании своей симулируемой машинки =)
-
-Ну и для начала мы смотрим в глубь файла утилитой `roscat`
-```bash
-roscat turtlebot_gazebo turtlebot_world.launch
-```
+Заглянем для начала в файл `turtlebot3_world.launch`:
 ```xml
+<!-- roscat turtlebot3_gazebo turtlebot3_world.launch -->
+
 <launch>
-	<!-- Аргумент названия файла мира -->
-  <arg name="world_file"  default="$(env TURTLEBOT_GAZEBO_WORLD_FILE)"/>
+  <!-- Аргументы (ура, сейчас уберем эту надоедливую переменную окружения) -->
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="x_pos" default="-2.0"/>
+  <arg name="y_pos" default="-0.5"/>
+  <arg name="z_pos" default="0.0"/>
 
-  <!-- Некоторые параметры для черепашки -->
-  <arg name="base"      value="$(optenv TURTLEBOT_BASE kobuki)"/> <!-- create, roomba -->
-  <arg name="battery"   value="$(optenv TURTLEBOT_BATTERY /proc/acpi/battery/BAT0)"/>  <!-- /proc/acpi/battery/BAT0 --> 
-  <arg name="gui" default="true"/>
-  <arg name="stacks"    value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons --> 
-  <arg name="3d_sensor" value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro --> 
-
-  <!-- Стандартный запуск Gazebo - дальше нет смысла идти, здесь точка запуска Gazebo -->
+  <!-- Запустить Gazebo -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_world.world"/>
+    <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
     <arg name="debug" value="false"/>
-    <arg name="gui" value="$(arg gui)" />
-    <!-- А вот здесь указываем мир, который хотим запустить -->
-    <arg name="world_name" value="$(arg world_file)"/>
   </include>
 
-  <!-- Запуск системы представления Turtlebot - надо будет капнуть поглубже -->
-  <include file="$(find turtlebot_gazebo)/launch/includes/$(arg base).launch.xml">
-    <arg name="base" value="$(arg base)"/>
-    <arg name="stacks" value="$(arg stacks)"/>
-    <arg name="3d_sensor" value="$(arg 3d_sensor)"/>
-  </include>
-  
-  <!-- Запуск публикации состояния робота - нужен для TF представления робота, глубже не копаем -->
+  <!-- Установить параметру с именем 'robot_description' описание робота -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+
+  <!-- Создать робота по описанию из 'robot_description' и аргументам начального положения -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model turtlebot3_$(arg model) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+</launch>
+```
+
+То что надо! Комментарии кратко описывают, что делает каждая часть, а мы перейдем ко второму файлу `turtlebot3_remote.launch`:
+```xml
+<!-- roscat turtlebot3_bringup turtlebot3_remote.launch -->
+
+<launch>
+  ...
+
+  <!-- Оставим самую важную часть, которая нам нужна -->
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-    <param name="publish_frequency" type="double" value="30.0" />
-  </node>
-  
-  <!-- Узел (тут правда нодлет) преобразования RGBD изображения в LaserScan, преобразуем к запуску обычного узла -->
-  <!-- Fake laser -->
-  <node pkg="nodelet" type="nodelet" name="laserscan_nodelet_manager" args="manager"/>
-  <node pkg="nodelet" type="nodelet" name="depthimage_to_laserscan"
-        args="load depthimage_to_laserscan/DepthImageToLaserScanNodelet laserscan_nodelet_manager">
-    <param name="scan_height" value="10"/>
-    <param name="output_frame_id" value="/camera_depth_frame"/>
-    <param name="range_min" value="0.45"/>
-    <remap from="image" to="/camera/depth/image_raw"/>
-    <remap from="scan" to="/scan"/>
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" value="$(arg multi_robot_name)"/>
   </node>
 </launch>
 ```
 
-Я позволил себе добавить немного комментов, но давайте практиковаться, чтобы поразобраться!
+Опустив все лишнее мы сталкиваемся с запуском `robot_state_publisher`, без которого не строится дерево TF из описания робота.
 
-## Gazebo
+Осталось последнее, переделать скрипт управления телеметрией (он тоже просил ту переменную окружения), смотрим его:
+```xml
+<!-- roscat turtlebot3_teleop turtlebot3_teleop_key.launch -->
 
-Начнем с ходьбы - запуск Gazebo с желаемым миром, напишем новый launch-файл `turtlebot_gazebo.launch`
+<launch>
+  <!-- Тот самый аргумент -->
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <!-- О, так он его в параметр записывает, почему бы не делать этого гобально при создании робота?? -->
+  <param name="model" value="$(arg model)"/>
+
+  <!-- Запуск управления по кнопкам -->
+  <node pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="turtlebot3_teleop_keyboard"  output="screen">
+  </node>
+</launch>
+```
+
+Не очень сложно, просто запуск узла перевода нажатий клавиш в топик `/cmd_vel`. Теперь давайте начнем создавать свой скрипт создания и запуска симуляции робота `tb3_gazebo_start.launch`
+
 ```xml
 <?xml version="1.0"?>
 <launch>
-	<!-- GAZEBO -->
-
-	<!-- Аргумент названия файла мира (берем из пакета turtlebot_gazebo пока не создавали свой) -->
-	<!-- В комментариях закрыты варианты из пакета -->
-  <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/playground.world"/>
-  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/empty.world"/> -->
-  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/corridor.world"/> -->
-  
-  <!-- Аргумент включения GUI представления, иногда оно не нужно, проверим позже =) -->
-  <!-- Вынесено отдельным аргументом, чтобы можно было управлять при запуске скрипта -->
-  <arg name="gui" default="true"/>
-  
-  <!-- Стандартный запуск Gazebo - дальше нет смысла идти, здесь точка запуска Gazebo -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-  	<!-- Работа ведется не в реальном времени, а в симулируемом -->
+    <!-- Да, описание мира все таки возьмем из пакета =) -->
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_world.world"/>
+    <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
-    <!-- Отключим отладочную инфу - лишнее на данный момент -->
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
     <arg name="debug" value="false"/>
-    <!-- Включим/отключим GUI в завимиости от того, что имеет аргумент -->
-    <arg name="gui" value="$(arg gui)" />
-    <!-- А вот здесь указываем мир, который хотим запустить -->
-    <arg name="world_name" value="$(arg world_file)"/>
   </include>
-
 </launch>
 ```
 
-[Подробнее про симулруемое время](http://wiki.ros.org/Clock).  
+Запускаем и проверяем, что творится:
 
-Запускаем
 ```bash
-roslaunch study_pkg turtlebot_gazebo.launch
+roslaunch study_pkg tb3_gazebo_start.launch
 ```
-И вот, что получилось:
+
 <p align="center">
 <img src="img1/T6_gazebo_no_turtle.png">
 </p>
 
-Объявляю вас наученным запускать Gazebo из launch-файла с определенным миром =) Предлагаю попробовать поставить мир `corridor.world` и запустить =)
+Таким образом мы запустили симулятор без робота, просто окружение.
+Теперь добавим создание робота:
 
-## Turtlebot подробнее
-
-Разберем запуск робота 
-```xml
-<include file="$(find turtlebot_gazebo)/launch/includes/$(arg base).launch.xml">
-```
-База (аргумент `base`) у нас `kobuki`, поэтому
-```bash
-roscat turtlebot_gazebo kobuki.launch.xml
-```
-```xml
-<launch>
-  <arg name="base"/>
-  <arg name="stacks"/>
-  <arg name="3d_sensor"/>
-  
-  <!-- Вот здесь самый сок и происходит, задаем аргумент, который потом передадим в `robot_description` -->
-  <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find turtlebot_description)/robots/$(arg base)_$(arg stacks)_$(arg 3d_sensor).urdf.xacro'" />
-  <!-- Настраиваем параметр `robot_description`, который будет нашим описанием робота -->
-  <param name="robot_description" command="$(arg urdf_file)" />
-  
-  <!-- Вызываем узел `spawn_model`, который делает всю работу! -->
-  <!-- Он из параметра `robot_description` создает представление робота! -->
-  <!-- Gazebo model spawner -->
-  <node name="spawn_turtlebot_model" pkg="gazebo_ros" type="spawn_model"
-        args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model mobile_base"/>
-  
-	<!-- Дальше не очень интересно -->
-	<!-- 1. Создаем мультиплексор для различных видов управения, упростим это для себя -->
-	<!-- 2. Создается датчик "бампер" =) -->
-  <!-- Velocity muxer -->
-  <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
-  <node pkg="nodelet" type="nodelet" name="cmd_vel_mux"
-        args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
-    <param name="yaml_cfg_file" value="$(find turtlebot_bringup)/param/mux.yaml" />
-    <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
-  </node>
-
-  <!-- Bumper/cliff to pointcloud (not working, as it needs sensors/core messages) -->
-  <include file="$(find turtlebot_bringup)/launch/includes/kobuki/bumper2pc.launch.xml"/>
-</launch>
-```
-
-Давайте перетащим наиболее важные кусочки и разберем их. Теперь наш файл `turtlebot_gazebo.launch` будет вот таким:
 ```xml
 <?xml version="1.0"?>
 <launch>
-	<!-- GAZEBO -->
+  <!-- Поставим по-умолчанию вафельку =) -->
+  <arg name="model" default="waffle" doc="model type [burger, waffle, waffle_pi]"/>
+  <!-- Аргументами можем передать начальное положение робота -->
+  <arg name="x_pos" default="-2.0"/>
+  <arg name="y_pos" default="-0.5"/>
+  <arg name="z_pos" default="0.0"/>
 
-	<!-- Аргумент названия файла мира (берем из пакета turtlebot_gazebo пока не создавали свой) -->
-	<!-- В комментариях закрыты варианты из пакета -->
-  <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/playground.world"/>
-  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/empty.world"/> -->
-  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/corridor.world"/> -->
-  
-  <!-- Аргумент включения GUI представления, иногда оно не нужно, проверим позже =) -->
-  <!-- Вынесено отдельным аргументом, чтобы можно было управлять при запуске скрипта -->
-  <arg name="gui" default="true"/>
-  
-  <!-- Стандартный запуск Gazebo - дальше нет смысла идти, здесь точка запуска Gazebo -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-  	<!-- Работа ведется не в реальном времени, а в симулируемом -->
+    <!-- Да, описание мира все таки возьмем из пакета =) -->
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_world.world"/>
+    <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
-    <!-- Отключим отладочную инфу - лишнее на данный момент -->
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
     <arg name="debug" value="false"/>
-    <!-- Включим/отключим GUI в завимиости от того, что имеет аргумент -->
-    <arg name="gui" value="$(arg gui)" />
-    <!-- А вот здесь указываем мир, который хотим запустить -->
-    <arg name="world_name" value="$(arg world_file)"/>
   </include>
 
-  <!-- TURTLEBOT -->
+  <!-- Да, описание робота все таки возьмем из пакета =) -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
 
-  <!-- Вот здесь самый сок и происходит, задаем аргумент, который потом передадим в `robot_description` -->
-  <!-- Подставим жесткое описание из файла `kobuki_hexagons_kinect.urdf.xacro` -->
-  <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find turtlebot_description)/robots/kobuki_hexagons_kinect.urdf.xacro'" />
-  <!-- Настраиваем параметр `robot_description`, который будет нашим описанием робота -->
-  <param name="robot_description" command="$(arg urdf_file)" />
-  
-  <!-- Вызываем узел `spawn_model`, который делает всю работу! -->
-  <!-- Он из параметра `robot_description` создает представление робота! -->
-  <node name="spawn_turtlebot_model" pkg="gazebo_ros" type="spawn_model"
-        args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model mobile_base"/>
-  
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model turtlebot3_$(arg model) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
 </launch>
-
 ```
 
-Ура, связались с описанием файла, теперь запускаем
-```bash
-roslaunch study_pkg turtlebot_gazebo.launch
-```
-
-И вот, что получилось:
+И снова запускаем и видим следующую картинку:
 <p align="center">
 <img src="img1/T6_gazebo_with_turtle.png">
 </p>
 
-Взглянем на топики, которые сейчас есть в экосистеме:
-```
-/camera/depth/camera_info
-/camera/depth/image_raw
-/camera/depth/points
-/camera/parameter_descriptions
-/camera/parameter_updates
-/camera/rgb/camera_info
-/camera/rgb/image_raw
-/camera/rgb/image_raw/compressed
-/camera/rgb/image_raw/compressed/parameter_descriptions
-/camera/rgb/image_raw/compressed/parameter_updates
-/camera/rgb/image_raw/compressedDepth
-/camera/rgb/image_raw/compressedDepth/parameter_descriptions
-/camera/rgb/image_raw/compressedDepth/parameter_updates
-/camera/rgb/image_raw/theora
-/camera/rgb/image_raw/theora/parameter_descriptions
-/camera/rgb/image_raw/theora/parameter_updates
-/clock
-/gazebo/link_states
-/gazebo/model_states
-/gazebo/parameter_descriptions
-/gazebo/parameter_updates
-/gazebo/set_link_state
-/gazebo/set_model_state
-/gazebo_gui/parameter_descriptions
-/gazebo_gui/parameter_updates
-/joint_states
-/mobile_base/commands/motor_power
-/mobile_base/commands/reset_odometry
-/mobile_base/commands/velocity
-/mobile_base/events/bumper
-/mobile_base/events/cliff
-/mobile_base/sensors/imu_data
-/odom
-/rosout
-/rosout_agg
-/tf
-```
-
-По топикам все достаточно интересно:  
-- Есть пространство `/camera` - оно отвечает за кинект, это подтверждается топиками этого пространства;  
-- Пространство `/gazebo` - это пространство симулятора, для нас оно сейчас неинтересно;  
-- Пространство `/mobile_base` - пространство робота, в нем мы видим, что подпространство `commands` соответствует заданию определенных величин для робота (`motor_power` - мощность моторов [тип топика нестандартный, берется из пакета `kobuki_msgs`], `velocity` - скорость вращения, `reset_odometry` - сброс одометрии).
-
-И посмотрим на систему TF:
-```bash
-rosrun rqt_tf_tree rqt_tf_tree
-```
+Оп, появилась вафелька! Только если глянуть на дерево TF, то картина не радует:
 <p align="center">
-<img src="img1/T6_rqt_tf_tree_no_state.png">
+<img src="img1/T6_tf_no_states.png">
 </p>
 
-Из TF инфы маловато, есть всего две СК: одометрия и СК робота. Тут сейчас ничего не скажешь и мы увидим, чего не хватает в системе.
+Не хватает того самого `robot_state_publisher`. В результате получаем конечный вид скрипта:
 
-А давайте запустим rviz и попробуем увидеть робота через визуализацию:
-<p align="center">
-<img src="img1/T6_rviz_no_state.png">
-</p>
-
-Судя по ряду ошибок, для полноценного отображения rviz не хватает большого количества TF преобразований. На самом деле это логично, так как модель робота состоит из частей, распределенных между собой, а TF позволяет сообщить о том, как они между собой располагаются. Если пролистать, мы увидим, что количество их большое. Причиной этому - сложная композиция робота, но возможность починить - простая. 
-
-# Последние тонкости
-
-Нам не хватает специального узла [`robot_state_publisher`](http://wiki.ros.org/robot_state_publisher), который может публиковать данные TF на основе описания робота `robot_description`. Такой узел запускается в файле `turtlebot_world.launch` пакета `turtlebot_gazebo`:
-```xml
-  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-    <param name="publish_frequency" type="double" value="30.0" />
-  </node>
-```
-
-Так что добавляем аналогичную строку в наш файл.
-
-> По секрету всему свету, `robot_state_publisher` подписывается на топик `/joint_states`, который публикуется при запуске модели робота (момент запуска узла `spawn_model`). В этом топике летят состояния узлов робота, а с помощью `robot_state_publisher` эти состояния переходят в вид TF.
-
-Ну и сразу добавим узел [`depthimage_to_laserscan`](http://wiki.ros.org/depthimage_to_laserscan), который будет генерировать данный `LaserScan` на основе RGBD данных с кинекта. В результате, файл будет иметь следующий вид:
 ```xml
 <?xml version="1.0"?>
 <launch>
-	<!-- GAZEBO -->
+  <!-- Поставим по-умолчанию вафельку =) -->
+  <arg name="model" default="waffle" doc="model type [burger, waffle, waffle_pi]"/>
+  <!-- Аргументами можем передать начальное положение робота-->
+  <arg name="x_pos" default="-2.0"/>
+  <arg name="y_pos" default="-0.5"/>
+  <arg name="z_pos" default="0.0"/>
+  
+  <!-- Запишем в параметр, чтобы вся система знала о типе робота -->
+  <param name="model" value="$(arg model)"/>
 
-	<!-- Аргумент названия файла мира (берем из пакета turtlebot_gazebo пока не создавали свой) -->
-	<!-- В комментариях закрыты варианты из пакета -->
-  <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/playground.world"/>
-  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/empty.world"/> -->
-  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/corridor.world"/> -->
-  
-  <!-- Аргумент включения GUI представления, иногда оно не нужно, проверим позже =) -->
-  <!-- Вынесено отдельным аргументом, чтобы можно было управлять при запуске скрипта -->
-  <arg name="gui" default="true"/>
-  
-  <!-- Стандартный запуск Gazebo - дальше нет смысла идти, здесь точка запуска Gazebo -->
+  <!-- Добавим аргумент, который позволит включать/выключать отображение окна Gazebo при запуске/использовании скрипта -->
+  <arg name="gz_gui" default="false"/>
+
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-  	<!-- Работа ведется не в реальном времени, а в симулируемом -->
+    <!-- Да, описание мира все таки возьмем из пакета =) -->
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_world.world"/>
+    <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
-    <!-- Отключим отладочную инфу - лишнее на данный момент -->
+    <arg name="gui" value="$(arg gz_gui)"/>
+    <arg name="headless" value="false"/>
     <arg name="debug" value="false"/>
-    <!-- Включим/отключим GUI в завимиости от того, что имеет аргумент -->
-    <arg name="gui" value="$(arg gui)" />
-    <!-- А вот здесь указываем мир, который хотим запустить -->
-    <arg name="world_name" value="$(arg world_file)"/>
   </include>
 
-  <!-- TURTLEBOT -->
+  <!-- Да, описание робота все таки возьмем из пакета =) -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
 
-  <!-- Вот здесь самый сок и происходит, задаем аргумент, который потом передадим в `robot_description` -->
-  <!-- Подставим жесткое описание из файла `kobuki_hexagons_kinect.urdf.xacro` -->
-  <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find turtlebot_description)/robots/kobuki_hexagons_kinect.urdf.xacro'" />
-  <!-- Настраиваем параметр `robot_description`, который будет нашим описанием робота -->
-  <param name="robot_description" command="$(arg urdf_file)" />
-  
-  <!-- Вызываем узел `spawn_model`, который делает всю работу! -->
-  <!-- Он из параметра `robot_description` создает представление робота! -->
-  <node name="spawn_turtlebot_model" pkg="gazebo_ros" type="spawn_model"
-        args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model mobile_base"/>
-  
-  <!-- Опубликуем TF преобразования на основе описания `robot_description` -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model turtlebot3_$(arg model) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+
+  <!-- Публикуем TF из описания робота -->
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-    <param name="publish_frequency" type="double" value="30.0" />
-  </node>
-
-  <!-- Запускаем преобразование из RGBD изображения в LaserScan -->
-	<node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan">
-    <!-- То, какую высоту учитывать присплющивании точек в линию -->
-    <param name="scan_height" value="10"/>
-    <!-- Название TF СК, которая будет считаться СК для псевдолидара -->
-    <param name="output_frame_id" value="/camera_depth_frame"/>
-    <!-- Минимальная дистанция для скана -->
-    <param name="range_min" value="0.45"/>
-    <!-- Исходное изображение с каналом Depth (цвет нас все таки не интересует) -->
-    <!-- На этот топик подписываемся -->
-    <remap from="image" to="/camera/depth/image_raw"/>
-    <!-- Этот топик публикуется как результат -->
-    <remap from="scan" to="/scan"/>
+    <param name="publish_frequency" type="double" value="50.0" />
   </node>
 </launch>
 ```
 
-Вот теперь запускаем `rosrun rqt_tf_tree rqt_tf_tree` и видим, что TF преобразований на порядок больше, проверяем в rviz:
+> На всякий случай скажу, отображение окна Gazebo не является всей симуляцией, можно работать с роботом без включения окна Gazebo, так как весь робот и физика в симуляторе - набор формул и математики, а не визуальное представление (разделение на gzclient [окно отображения] и gzserver [физический движок]).
+
+Запустим и проверим, что все на месте:
 <p align="center">
-<img src="img1/T6_rviz_states.png">
+<img src="img1/T6_tf_states.png">
 </p>
 
-Вот и знакомая нам черепашка! Можете сами проверить работоспособность все топиков датчиков =)
-
-# Что дальше?
-
-В этом топике мы написали замену launch-файла `turtlebot_world.launch` из пакета `turtlebot_gazebo`. Наш файл `turtlebot_gazebo.launch` имеет аналогичный функционал. По факту мы упростили работу узлов, исключив различные нодлеты и теперь в нашей реализации работают только понятные нам узлы. Единственным расхождением является узел телеуправления (с клавиатуры). Так что напишем свою реализацию под названием `turtlebot_teleop.launch`:
+И теперь создадим скрипт, который просто запустит симулятор без отображения и позволит управлять роботом с клавиатуры с отображением в Rviz (точнее исправим `tb3_gz_keyboard.launch`):
 ```xml
 <?xml version="1.0"?>
 <launch>
-  <!-- turtlebot_teleop_key already has its own built in velocity smoother -->
-  <node pkg="turtlebot_teleop" type="turtlebot_teleop_key" name="turtlebot_teleop_keyboard"  output="screen">
-    <param name="scale_linear" value="0.5" type="double"/>
-    <param name="scale_angular" value="1.5" type="double"/>
-    <!-- Вот главная точка расхождения, нужно мапировать к другому топику! -->
-    <remap from="turtlebot_teleop_keyboard/cmd_vel" to="mobile_base/commands/velocity"/>
-  </node>
+    <include file="$(find study_pkg)/launch/tb3_gazebo_start.launch">
+    </include>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find study_pkg)/rviz/tb3_scan_tf.rviz"/>
+
+    <!-- Можно написать свой launch с запуском узла, но так как нет никаких настроек - оставим -->
+    <node pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="turtlebot3_teleop_keyboard"  output="screen">
+    </node>
 </launch>
 ```
 
-А также можем поправить файл запуска симулятора с rviz и узлом построения карты к следующему виду:
-```xml
-<?xml version="1.0"?>
-<launch>
-  <arg name="rtabmap" default="true"/>
+Просто выглядит, не так ли? Убеждаемся, что все работает!
 
-  <!-- Start turtlebot Gazebo simulation -->
-  <!-- <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/> -->
-  <!-- Replaced with our new file! -->
-  <include file="$(find study_pkg)/launch/turtlebot_gazebo.launch">
-    <arg name="gui" value="false"/>
-  </include>
+> Если вы все таки переживаете за отображение - не волнуйтесь, просто запустите `gzclient` в отдельном терминале и вот вам отображение.
 
-  <!-- Start Rviz with required views -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find study_pkg)/rviz/turtlebot.rviz" />
+## Что дальше?
 
-  <!-- Start mapping node, method is based on <rtabmap> argument -->
-  <include unless="$(arg rtabmap)" file="$(find study_pkg)/launch/gmapping.launch"/>
-  <include     if="$(arg rtabmap)" file="$(find study_pkg)/launch/rtabmap.launch">
-    <arg name="rtabmapviz" value="false"/>
-  </include>
-</launch>
-```
 
-> Обратите внимание, аргументы `gui` и `rtabmapviz` установлены в `false` чтобы отключить отображение GUI Gazebo и RTABmapViz. Все таки, все данные видны в rviz =)
 
-<p align="center">
-<img src="img1/T6_rviz_everything_ok.png">
-</p>
 
-Как видно, все работает как и прежде, неплохой результат!
 
-# В итоге
+## P.S.
 
-Давайте еще раз посмотрим на наш новый файл `turtlebot_gazebo.launch`
-```xml
-<?xml version="1.0"?>
-<launch>
-	<!-- GAZEBO -->
+> На самом деле, то, что мы пытались избавиться от переменной окружения, было задумано разработчиками специально, так как они предполагают простой запуск нескольких таких роботов в симуляторе. Чтобы управлять каждый типом робота, были и добавлен аргумент с указанием конкретной модели. Но так как для наших задач важнее управлять одним - мы упрощает под себя =).
 
-	<!-- Аргумент названия файла мира (берем из пакета turtlebot_gazebo пока не создавали свой) -->
-	<!-- В комментариях закрыты варианты из пакета -->
-  <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/playground.world"/>
-  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/empty.world"/> -->
-  <!-- <arg name="world_file"  default="$(find turtlebot_gazebo)/worlds/corridor.world"/> -->
-  
-  <!-- Аргумент включения GUI представления, иногда оно не нужно, проверим позже =) -->
-  <!-- Вынесено отдельным аргументом, чтобы можно было управлять при запуске скрипта -->
-  <arg name="gui" default="true"/>
-  
-  <!-- Стандартный запуск Gazebo - дальше нет смысла идти, здесь точка запуска Gazebo -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-  	<!-- Работа ведется не в реальном времени, а в симулируемом -->
-    <arg name="use_sim_time" value="true"/>
-    <!-- Отключим отладочную инфу - лишнее на данный момент -->
-    <arg name="debug" value="false"/>
-    <!-- Включим/отключим GUI в завимиости от того, что имеет аргумент -->
-    <arg name="gui" value="$(arg gui)" />
-    <!-- А вот здесь указываем мир, который хотим запустить -->
-    <arg name="world_name" value="$(arg world_file)"/>
-  </include>
 
-  <!-- TURTLEBOT -->
 
-  <!-- Вот здесь самый сок и происходит, задаем аргумент, который потом передадим в `robot_description` -->
-  <!-- Подставим жесткое описание из файла `kobuki_hexagons_kinect.urdf.xacro` -->
-  <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find turtlebot_description)/robots/kobuki_hexagons_kinect.urdf.xacro'" />
-  <!-- Настраиваем параметр `robot_description`, который будет нашим описанием робота -->
-  <param name="robot_description" command="$(arg urdf_file)" />
-  
-  <!-- Вызываем узел `spawn_model`, который делает всю работу! -->
-  <!-- Он из параметра `robot_description` создает представление робота! -->
-  <node name="spawn_turtlebot_model" pkg="gazebo_ros" type="spawn_model"
-        args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model mobile_base"/>
-  
-  <!-- Опубликуем TF преобразования на основе описания `robot_description` -->
-  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-    <param name="publish_frequency" type="double" value="30.0" />
-  </node>
 
-  <!-- Запускаем преобразование из RGBD изображения в LaserScan -->
-	<node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan">
-    <!-- То, какую высоту учитывать присплющивании точек в линию -->
-    <param name="scan_height" value="10"/>
-    <!-- Название TF СК, которая будет считаться СК для псевдолидара -->
-    <param name="output_frame_id" value="/camera_depth_frame"/>
-    <!-- Минимальная дистанция для скана -->
-    <param name="range_min" value="0.45"/>
-    <!-- Исходное изображение с каналом Depth (цвет нас все таки не интересует) -->
-    <!-- На этот топик подписываемся -->
-    <remap from="image" to="/camera/depth/image_raw"/>
-    <!-- Этот топик публикуется как результат -->
-    <remap from="scan" to="/scan"/>
-  </node>
-</launch>
-```
-
-Можно увидеть, что исключая запуск Gazebo, а также узел псевдолидара (создание `LaserScan`), мы лишь запускаем узлы `spawn_model` и `robot_state_publisher`. Второй публикует данные TF из описания, а первый делает всю работу.
-
-Можно обратиться к файлу описания робота `kobuki_hexagons_kinect.urdf.xacro`:
-```bash
-roscat turtlebot_description kobuki_hexagons_kinect.urdf.xacro
-```
-
-Вы увидите, что он тянет множество других файлов, демонстрироваться они здесь не будут, так как с этого момента начинается тема создания описания робота. Из-за того, что робот `turtlebot` очень комплексный, то тематику создания робота логично начать с более простых образцов, а `turtlebot` будет для нас пока закрытым готовым решением =)
-
-> Для особо любопытных - можете прогуляться по файлам и посмотреть, как создан `turtlebot` и его датчики.
