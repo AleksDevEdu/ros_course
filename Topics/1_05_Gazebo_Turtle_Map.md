@@ -37,6 +37,8 @@ TURTLEBOT3_MODEL=waffle roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launc
 - `Laserscan/Style` -> Points;
 - `LaserScan/Size (Pixels)` -> 3.
 
+> В релизе ROS Melodic есть некоторая проблема, которая не позволяет отобразить модель робота. Для исправления этой проблемы добавьте в терминал `export LC_NUMERIC="en_US.UTF-8"` или пропишите эту строку в `.[bash/zsh]rc` и наслаждайтесь видом робота в Rviz.
+
 Должно получиться так:
 
 <p align="center">
@@ -150,6 +152,8 @@ TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard_rviz.launch
 - Создаем отображение (кнопка Add) по типу - TF, настраиваем на отображение `odom` и `base_link`;
 - Создаем отображение по топику `/scan`, настраиваем тип и размер, как делали раньше;
 - В панели `Views` устанавливаем тип `TopDownOrtho`.
+
+> Если вы хотите видеть еще и модель робота, обязательно выполните `export LC_NUMERIC="en_US.UTF-8"` или добавьте в `.[bash/zsh]rc`. После этого можете добавить отображение данных по типу `RobotModel`.
 
 > Если какой-то панели не хватает, всегда можно включить в меню `Panels` необходимую панель.
 
