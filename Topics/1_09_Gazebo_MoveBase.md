@@ -2,7 +2,26 @@
 
 Настало время поговорить о самостоятельном движении робота. В этой теме речь пойдет о пакете [move_base](http://wiki.ros.org/move_base), который располагается в стэке пакетов [navigation](http://wiki.ros.org/navigation). Для начала мы будем стартовать с примера катания и построения карты.
 
-Начнем, с того, что подготовим все необходимое, чтобы запускать указание цели и 
+Начнем, с того, что подготовим все необходимое, чтобы запускать указание цели и работала самостоятельная навигация робота в пространстве. Скопируем следующие файлы из `turtlebot3_navigation/param` к себе в папку `mb_cfg`:
+- `costmap_common_params_waffle.yaml`
+- `local_costmap_params.yaml`
+- `global_costmap_params.yaml`
+- `move_base_params.yaml`
+- `dwa_local_planner_params_waffle.yaml`
+
+Сделать это можно через `roscp`:
+```bash
+roscp turtlebot3_navigation costmap_common_params_waffle.yaml <указываете папку, куда положить>
+```
+
+Далее создадим скрипт запуска всего необходимого для `move_base`, назовем, не поверите, `move_base.launch`:
+```xml
+
+```
+
+
+
+
 
 Давайте создадим файл запуска `start_turtlebot_sim_nav.launch` в нашем пакете:
 ```xml
