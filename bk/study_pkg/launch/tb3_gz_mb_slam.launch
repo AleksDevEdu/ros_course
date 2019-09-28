@@ -5,7 +5,7 @@
 
     <include file="$(find study_pkg)/launch/gmapping.launch">
     </include>
-    
-    <node pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="turtlebot3_teleop_keyboard" output="screen">
-    </node>
+
+    <include file="$(find study_pkg)/launch/move_base.launch">
+    </include>
 </launch>

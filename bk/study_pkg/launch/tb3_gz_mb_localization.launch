@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find study_pkg)/launch/tb3_gazebo_start.launch">
+    </include>
+
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find study_pkg)/maps/map.yaml" />
+
+    <include file="$(find study_pkg)/launch/amcl.launch">
+        <arg name="initial_pose_x" default="-1.5"/>
+        <arg name="initial_pose_y" default="-0.3"/>
+        <arg name="initial_pose_a" default="0.0"/>
+    </include>
+
+    <include file="$(find study_pkg)/launch/move_base.launch">
+    </include>
+</launch>
