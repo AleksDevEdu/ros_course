@@ -60,7 +60,7 @@ TURTLEBOT3_MODEL=waffle roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launc
 - Запуск Rviz (пока просто то, что предлагает готовый пакет);
 - Запуск управления по клавиатуре.
 
-В собственном пакете (ранее это был `study_pkg` или ваше собственное название) в папке launch создаем скрипт `tb3_gz_keyboard.launch.launch`:
+В собственном пакете (ранее это был `study_pkg` или ваше собственное название) в папке launch создаем скрипт `tb3_gz_keyboard_rviz.launch`:
 ```xml
 <?xml version="1.0"?>
 <launch>
@@ -80,7 +80,7 @@ TURTLEBOT3_MODEL=waffle roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launc
 
 и проверяем запуск:
 ```
-TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard.launch.launch
+TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard_rviz.launch
 ```
 
 Если вы можете управлять с консоли роботом и видите, как меняется ситуация в Rviz и Gazebo - поздравляю, вы успешно запустили симулятор, систему отображения и управления одним скриптом!
@@ -99,7 +99,7 @@ TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard.launch.launch
 roscat turtlebot3_gazebo turtlebot3_gazebo_rviz.launch
 ```
 
-Получаем (я добавил комменты):
+Получаем (добавлены комменты):
 ```xml
 <launch>
     <!-- Аргумент launch скрипта, так вот где он читал переменную TURTLEBOT3_MODEL! -->
@@ -142,7 +142,7 @@ roscat turtlebot3_gazebo turtlebot3_gazebo_rviz.launch
 
 Запускаем:
 ```
-TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard.launch
+TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard_rviz.launch
 ```
 
 Теперь мы видим, что Rviz пустоват, настраиваем:
@@ -155,7 +155,7 @@ TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard.launch
 
 **Самое главное** - после настройки мы не хотим по-новой настраивать все эти вещи, особенно, если робот и датчики не меняютс, а значит пора сохранить настройки! Лезем в меню `File -> Save Config As` и сохраняем как файл `tb3_scan_tf`.
 
-После этого в launch запуск как раз подставляет к запуску ту самую опцию `-d`, но уже с указание нашей настройки, должно получиться так:
+После этого в launch как раз подставляет к запуску ту самую опцию `-d`, но уже с указание нашей настройки, должно получиться так:
 ```xml
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find study_pkg)/rviz/tb3_scan_tf.rviz"/>
 ```
@@ -228,7 +228,7 @@ TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard.launch
 Далее, запускаем симулятор, Rviz, телеуправление и gmapping:
 ```bash
 # В одном терминале
-TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard.launch
+TURTLEBOT3_MODEL=waffle roslaunch study_pkg tb3_gz_keyboard_rviz.launch
 # В другом терминале
 roslaunch study_pkg gmapping.launch
 ```
@@ -255,7 +255,7 @@ roslaunch study_pkg gmapping.launch
 
 Любая карта представляет собой информацию о местности, на данный момент построенная карта является важной вещью, так как, полагаю, нет желания постоянно перестраивать эту карту, хоть это и симулятор, который можно перезапускать вечно. Представьте что вы находитесь в условиях, где можно лишь пару раз проехать и получить инфу о местности.
 
-Меньше разговоров, пакет [`map_server`](http://wiki.ros.org/map_server) - вот, что нам нужно!
+Меньше разговоров, пакет [map_server](http://wiki.ros.org/map_server) - вот, что нам нужно!
 
 > Сохраненные карты также можно хранить в системе контроля версии и рекомендуется держать в пакете в папке `maps`
 
@@ -343,7 +343,7 @@ roslaunch study_pkg rviz_slam_view.launch
 
 # Любишь кататься - люби и саночки возить
 
-Все бы хорошо, но вот мы попробовали поиспользовать методы построения карт, а взаимодействие с нашими датчиками совсем осталось за кадром. Пока только по опыту мы знаем, что `gmapping` работает на основе `LaserScan`.
+Все бы хорошо, но вот мы попробовали поиспользовать метод построения карт, а взаимодействие с нашими датчиками совсем осталось за кадром. Пока только по опыту мы знаем, что `gmapping` работает на основе `LaserScan`.
 
 Из [доков gmapping](http://wiki.ros.org/gmapping) мы выясняем, что ему необходима следующая инфа
 ```

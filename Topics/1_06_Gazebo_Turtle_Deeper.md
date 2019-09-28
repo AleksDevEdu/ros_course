@@ -4,7 +4,7 @@
 
 > Спойлер, там не так все сложно! А еще наша задача - развернуть launch скрипты и сделать все максимально удобно для наших задач!
 
-Давайте вспомним, какая часть в нашем `tb3_gz_keyboard.launch`/`tb3_gz_keyboard_slam.launch` отвечает за запуск робота и управление с клавиатуры:
+Давайте вспомним, какая часть в нашем `tb3_gz_keyboard_rviz.launch`/`tb3_gz_keyboard_slam.launch` отвечает за запуск робота и управление с клавиатуры:
 ```xml
     <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch">
     </include>
@@ -195,7 +195,7 @@ roslaunch study_pkg tb3_gazebo_start.launch
 <img src="img1/T6_tf_states.png">
 </p>
 
-И теперь создадим скрипт, который просто запустит симулятор без отображения и позволит управлять роботом с клавиатуры с отображением в Rviz (точнее исправим `tb3_gz_keyboard.launch`):
+И теперь создадим скрипт, который просто запустит симулятор без отображения и позволит управлять роботом с клавиатуры с отображением в Rviz (точнее исправим `tb3_gz_keyboard_rviz.launch`):
 ```xml
 <?xml version="1.0"?>
 <launch>
