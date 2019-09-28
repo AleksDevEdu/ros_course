@@ -1,73 +1,91 @@
 # AMCL - Adaptive Monte-Carlo Localization
 
-Помните, мы когда-то пользовались узлом `map_saver` из пакета `map_server`? Мы таким образом сохранили карту в файлы каринки и описания. Самое время пользоваться ими! Для этого мы посмотрим на интересный алогритм [AMCL](http://wiki.ros.org/amcl) в ROS.
+Помните, мы когда-то пользовались узлом `map_saver` из пакета [map_server](http://wiki.ros.org/map_server)? Мы таким образом сохранили карту в файлы каринки и описания. Самое время пользоваться ими! Для этого мы посмотрим на интересный алогритм [AMCL](http://wiki.ros.org/amcl) в ROS (за основу возьмем `amcl.launch` из `turtlebot3_navigation`).
 
 Создаем файл `amcl.launch` в нашем пакете:
 ```xml
 <?xml version="1.0"?>
 <launch>
-	<node pkg="amcl" type="amcl" name="amcl" output="screen">
-	  <!-- Publish scans from best pose at a max of 10 Hz -->
-	  <param name="odom_model_type" value="diff"/>
-	  <param name="odom_alpha5" value="0.1"/>
-	  <param name="transform_tolerance" value="0.2" />
-	  <param name="gui_publish_rate" value="10.0"/>
-	  <param name="laser_max_beams" value="30"/>
-	  <param name="min_particles" value="500"/>
-	  <param name="max_particles" value="5000"/>
-	  <param name="kld_err" value="0.05"/>
-	  <param name="kld_z" value="0.99"/>
-	  <param name="odom_alpha1" value="0.2"/>
-	  <param name="odom_alpha2" value="0.2"/>
-	  <!-- translation std dev, m -->
-	  <param name="odom_alpha3" value="0.8"/>
-	  <param name="odom_alpha4" value="0.2"/>
-	  <param name="laser_z_hit" value="0.5"/>
-	  <param name="laser_z_short" value="0.05"/>
-	  <param name="laser_z_max" value="0.05"/>
-	  <param name="laser_z_rand" value="0.5"/>
-	  <param name="laser_sigma_hit" value="0.2"/>
-	  <param name="laser_lambda_short" value="0.1"/>
-	  <param name="laser_lambda_short" value="0.1"/>
-	  <param name="laser_model_type" value="likelihood_field"/>
-	  <!-- <param name="laser_model_type" value="beam"/> -->
-	  <param name="laser_likelihood_max_dist" value="2.0"/>
-	  <param name="update_min_d" value="0.2"/>
-	  <param name="update_min_a" value="0.5"/>
-	  <param name="odom_frame_id" value="odom"/>
-	  <param name="resample_interval" value="1"/>
-	  <param name="transform_tolerance" value="0.1"/>
-	  <param name="recovery_alpha_slow" value="0.0"/>
-	  <param name="recovery_alpha_fast" value="0.0"/>
+	<!-- Arguments -->
+	<arg name="scan_topic"     default="scan"/>
+	<arg name="initial_pose_x" default="0.0"/>
+	<arg name="initial_pose_y" default="0.0"/>
+	<arg name="initial_pose_a" default="0.0"/>
+	<!-- Добавим агрументов, чтобы можно было настроить фреймы -->
+	<arg name="set_base_frame" default="base_footprint"/>
+	<arg name="set_odom_frame" default="odom"/>
+
+	<!-- AMCL -->
+	<node pkg="amcl" type="amcl" name="amcl">
+		<param name="min_particles"             value="500"/>
+		<param name="max_particles"             value="3000"/>
+		<param name="kld_err"                   value="0.02"/>
+		<param name="update_min_d"              value="0.20"/>
+		<param name="update_min_a"              value="0.20"/>
+		<param name="resample_interval"         value="1"/>
+		<param name="transform_tolerance"       value="0.5"/>
+		<param name="recovery_alpha_slow"       value="0.00"/>
+		<param name="recovery_alpha_fast"       value="0.00"/>
+		<param name="initial_pose_x"            value="$(arg initial_pose_x)"/>
+		<param name="initial_pose_y"            value="$(arg initial_pose_y)"/>
+		<param name="initial_pose_a"            value="$(arg initial_pose_a)"/>
+		<param name="gui_publish_rate"          value="50.0"/>
+
+		<remap from="scan"                      to="$(arg scan_topic)"/>
+		<param name="laser_max_range"           value="3.5"/>
+		<param name="laser_max_beams"           value="180"/>
+		<param name="laser_z_hit"               value="0.5"/>
+		<param name="laser_z_short"             value="0.05"/>
+		<param name="laser_z_max"               value="0.05"/>
+		<param name="laser_z_rand"              value="0.5"/>
+		<param name="laser_sigma_hit"           value="0.2"/>
+		<param name="laser_lambda_short"        value="0.1"/>
+		<param name="laser_likelihood_max_dist" value="2.0"/>
+		<param name="laser_model_type"          value="likelihood_field"/>
+
+		<param name="odom_model_type"           value="diff"/>
+		<param name="odom_alpha1"               value="0.1"/>
+		<param name="odom_alpha2"               value="0.1"/>
+		<param name="odom_alpha3"               value="0.1"/>
+		<param name="odom_alpha4"               value="0.1"/>
+		<param name="odom_frame_id"             value="$(arg set_odom_frame)"/>
+		<param name="base_frame_id"             value="$(arg set_base_frame)"/>
 	</node>
 </launch>
+
 ```
 
-Опять же, как и с прошлыми алгоритмами, алгоритм имеет ряд параметров, а также входные и выходные данные, начнем с параметров по умолчанию.
+Опять же, как и с gmapping, алгоритм имеет ряд параметров, а также входные и выходные данные, начнем с параметров по умолчанию.
 
-Также напишем новый файл, который будет представлять стадию локализации на уже известной карте, под названием `start_turtlebot_sim_amcl.launch`:
+В этот раз сразу напишем новый файл, который будет представлять стадию навигация на уже известной карте (+ запуск симулятора, телеуправление), под названием `tb3_gz_keyboard_navigation.launch`:
 ```xml
 <?xml version="1.0"?>
 <launch>
-  <!-- Start turtlebot Gazebo simulation -->
-  <!-- <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/> -->
-  <!-- Replaced with our new file! -->
-  <include file="$(find study_pkg)/launch/turtlebot_gazebo.launch">
-    <arg name="gui" value="false"/>
-  </include>
+	<!-- Запускаем симулятор с роботом -->
+    <include file="$(find study_pkg)/launch/tb3_gazebo_start.launch">
+    </include>
 
-  <!-- Start Rviz with required views -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find study_pkg)/rviz/turtlebot.rviz" />
+	<!-- Подгрузка сохраненной карты, чтобы робот уже имел представление о пространстве -->
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find study_pkg)/maps/map.yaml" />
 
-  <!-- Start map server to provide our saved map -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find study_pkg)/maps/map.yaml" />
+	<!-- Запуск AMCL для навигации на карте -->
+	<include file="$(find study_pkg)/launch/amcl.launch" />
 
-  <!-- Start localization in map -->
-  <include file="$(find study_pkg)/launch/amcl.launch" />
+	<!-- Телеуправление -->
+    <node pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="turtlebot3_teleop_keyboard"  output="screen">
+    </node>
 </launch>
 ```
 
 В новом файле пропали методы построения карты, зато используется узел `map_server`, который предоставляет нам статическую карту в топик `/map`. А также запускается наш launch-файл c алгоритмом AMCL.
+
+Для создания конфигурации Rviz под задачу навигации мы скопируем файл `tb3_slam.rviz` рядом (в ту же папку), но уже с названием `tb3_nav.rviz`. Это позволит начать конфигурацию не с нуля, а затем сохранить все в нужный файл. Также напишем файл запуска Rviz под визуализацию решения задачи навигации `rviz_navigation_view.launch`: 
+```xml
+<?xml version="1.0"?>
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find study_pkg)/rviz/tb3_nav" />
+</launch>
+```
 
 Стартуем
 ```bash
