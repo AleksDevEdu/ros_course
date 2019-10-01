@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find study_pkg)/launch/tb3_gazebo_start.launch">
+    </include>
+
+    <include file="$(find study_pkg)/launch/gmapping.launch">
+    </include>
+
+    <include file="$(find study_pkg)/launch/move_base.launch">
+    </include>
+</launch>
