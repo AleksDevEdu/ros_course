@@ -97,6 +97,12 @@
 roslaunch study_pkg tb3_gz_keyboard_localization.launch
 roslaunch study_pkg rviz_localization_view.launch
 ```
+
+> Проверьте внимательно нет ли ошибок. Может так случиться, что не хватает пакета `amcl`. Тогда нужно его установить. 
+```bash
+sudo apt install ros-melodic-amcl
+```
+
 После этого настроим отображение топика `/particlecloud`, который содержит информацию об облаке частиц с вероятным расположением робота.
 
 > **Не забудьте сделать** `Save Config` - это сохранит информацию о настройке в тот файл, через который мы открыли конфигурацию Rviz (`tb3_localization.rviz`).
