@@ -1,6 +1,0 @@
-<launch>
-
-  <node pkg="simple_package" type="talker" name="talker" />
-  <node pkg="simple_package" type="listener" name="listener" />
-
-</launch>

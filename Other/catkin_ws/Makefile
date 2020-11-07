@@ -1,2 +1,0 @@
-all:
-	catkin_make
