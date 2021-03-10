@@ -2,7 +2,7 @@
 
 > [Ссылка на YouTube-видео - Узлы и топики](https://www.youtube.com/watch?v=5jxTVYdbVX0&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=5)
 
-> [Google-презентация (слайды 1 - 4)](https://docs.google.com/presentation/d/1dAujwqXbiVhfxTfEow039pG2TtA19IUhpYOKfDjma68/edit#slide=id.g43adc50189_0_0)
+> [Google-презентация (слайды 1 - 4)](https://drive.google.com/file/d/1mKErFP3UfXJosmdZHWYPjee3CdMolmWy/view?usp=sharing)
 
 Вот и подошел черед познакомиться с первыми базовыми вещами ROS - __узлами__. Под узлом подразумевается программа, которая производит некоторые действия. Узлы соединяются __топиками__, через которые передают __сообщения__. Таким образом, приходим к знакомой схеме типа графа.  
 

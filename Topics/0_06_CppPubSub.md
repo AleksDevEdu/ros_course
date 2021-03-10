@@ -61,7 +61,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "cpp_talker");
 ```
 
-- Создание объекта [интерфейса узла](http://docs.ros.org/noetic/api/roscpp/html/classros_1_1NodeHandle.html)
+- Создание объекта [интерфейса узла](http://docs.ros.org/melodic/api/roscpp/html/classros_1_1NodeHandle.html)
 ```cpp
   ros::NodeHandle n;
 ```

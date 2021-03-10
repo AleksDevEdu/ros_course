@@ -80,7 +80,7 @@ rospack list
 echo $ROS_DISTRO
 ```
 
-Для ROS Noetic результат будет `noetic`.
+Для ROS Melodic результат будет `melodic`.
 
 ## Как настроить сеть для взаимодействия нескольких машин?
 - [Туториал](http://wiki.ros.org/ROS/Tutorials/MultipleMachines)  

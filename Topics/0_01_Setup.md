@@ -4,7 +4,7 @@
 
 > [YouTube-видео - Цели курса](https://www.youtube.com/watch?v=yOLnIvn2rP0&list=PLdRYu473gKJQAJ6ifxldnc4vgpuisu5L5&index=2&t=0s)
 
-> [Google-Презентация (слайды 1 - 9)](https://docs.google.com/presentation/d/1_jMoyNbstYQhdgVDTDNq7cwlQysoJzk2lRDcBLCoJfQ/edit#slide=id.p)
+> [Google-Презентация (слайды 1 - 9)](https://drive.google.com/file/d/1Nw1M7Kb99_QYJQ7s2kR1WofubDc8fcTX/view?usp=sharing)
 
 ## Требования
 - Установленный Linux дистрибутив (например [Ubuntu](http://releases.ubuntu.com/18.04/))
@@ -12,11 +12,8 @@
 - Базовые знания Unix (при отсутствии - задавайте больше вопросов)
 - Готовность к изучению нового и интересного =)
 
-> При работе через `venv` не забывайте создавать пространство с флагами `--system-site-packages -p python 2.7`, так подтянутся системные пакеты для второго питона и будет выбран второй питон!
 
 ## Подготовка среды ROS
-
-> Если вы работаете с эмулятором терминала `zsh`, то все `.bashrc` заменяются на -> `.zshrc`, а `/opt/ros/noetic/setup.bash` -> `/opt/ros/noetic/setup.zsh`
 
 Сначала настроим ROS (подключение системного рабочего пространства) для текущей сессии - открываем терминал и используем общую команду:
 ```bash
