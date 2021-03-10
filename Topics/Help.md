@@ -80,7 +80,7 @@ rospack list
 echo $ROS_DISTRO
 ```
 
-Для ROS Kinetic результат будет `kinetic`.
+Для ROS Noetic результат будет `noetic`.
 
 ## Как настроить сеть для взаимодействия нескольких машин?
 - [Туториал](http://wiki.ros.org/ROS/Tutorials/MultipleMachines)  

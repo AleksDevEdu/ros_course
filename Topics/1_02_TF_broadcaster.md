@@ -174,7 +174,7 @@ def handle_turtle_pose(msg, turtlename):
 (msg.x, msg.y, 0)
 ```
 
-Второй аргумент формируем используя функцию `tf.transformations.quaternion_from_euler()`. На вход она принимает три аргумента - углы эйлера (в радианах). Вот [ссылка](http://docs.ros.org/kinetic/api/tf/html/python/transformations.html#tf.transformations.quaternion_from_euler), если что. На выходе формирует вектор (кватернион), который мы просто передаем как второй аргумент функции `sendTransform()`:
+Второй аргумент формируем используя функцию `tf.transformations.quaternion_from_euler()`. На вход она принимает три аргумента - углы эйлера (в радианах). Вот [ссылка](http://docs.ros.org/noetic/api/tf/html/python/transformations.html#tf.transformations.quaternion_from_euler), если что. На выходе формирует вектор (кватернион), который мы просто передаем как второй аргумент функции `sendTransform()`:
 ```python
 tf.transformations.quaternion_from_euler(0, 0, msg.theta)
 ```

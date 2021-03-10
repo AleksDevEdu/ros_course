@@ -326,13 +326,13 @@ sample_ns:
 
 Чтож, во-первых, предлагаю посмотреть [туториал на офф странице](http://wiki.ros.org/roscpp_tutorials/Tutorials/Parameters). Во-вторых, принцип работы аналогичный, поэтому сильно расписывать и рассматривать не будем, обсудим только базовый функционал.
 
-> Весь дальнейший функционал принадлежит классу `NodeHandle` и требует созданного объекта этого класса. Далее полагаем, что где-то вызвали `ros::NodeHandle n;` Вот вам еще [API NodeHandle](http://docs.ros.org/kinetic/api/roscpp/html/classros_1_1NodeHandle.html).
+> Весь дальнейший функционал принадлежит классу `NodeHandle` и требует созданного объекта этого класса. Далее полагаем, что где-то вызвали `ros::NodeHandle n;` Вот вам еще [API NodeHandle](http://docs.ros.org/noetic/api/roscpp/html/classros_1_1NodeHandle.html).
 
 ```cpp
 bool getParam (const std::string& key, parameter_type& output_value) const;
 ```
 
-Функция получает значение параметра по переданному ключу (имени параметра). `parameter_type` соответствует типу значения параметра (`string`, `bool`, `int`, `double`). Есть еще специальный тип `XmlRpcValue`, но его рассморение не так важно и может быть рассмотрено из [документации](http://docs.ros.org/kinetic/api/xmlrpcpp/html/classXmlRpc_1_1XmlRpcValue.html). Возвращает функция `true`, если параметр был удачно получен, и `false`, если параметр не удалось получить (не существует, например). Пример получения параметра:
+Функция получает значение параметра по переданному ключу (имени параметра). `parameter_type` соответствует типу значения параметра (`string`, `bool`, `int`, `double`). Есть еще специальный тип `XmlRpcValue`, но его рассморение не так важно и может быть рассмотрено из [документации](http://docs.ros.org/noetic/api/xmlrpcpp/html/classXmlRpc_1_1XmlRpcValue.html). Возвращает функция `true`, если параметр был удачно получен, и `false`, если параметр не удалось получить (не существует, например). Пример получения параметра:
 ```cpp
     std::string s;
     if (n.getParam("my_param", s))
