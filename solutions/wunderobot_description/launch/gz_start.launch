@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Включить gzclient или нет -->
+  <arg name="gz_gui" default="true" />
+
+  <!-- Аргументов задаем путь до файла с роботом -->
+  <arg name="urdf_file" default="$(find wunderobot_description)/urdf/robot.urdf.xacro" />
+  
+  <!-- Затем прописывает в параметр описание робота -->
+  <!-- * Здесь robot_description будет представлять содержимое файла описания -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(arg urdf_file)'" />
+
+  <!-- Узел, который создает робота в Gazebo -->
+  <!-- Аргументы: -->
+  <!--    urdf / указываем формат описания -->
+  <!--    param robot_description / указание названия параметра, в котором хранится описание -->
+  <!--    model my_robot / указание имени модели (задано в .urdf файле), которую надо создать -->
+  <node name="spawn_base_model" pkg="gazebo_ros" type="spawn_model"
+        args="-urdf -param robot_description -model wunderobot" />
+
+  <!-- Запуск Gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- Специально будем запускать симулятор остановленным -->
+    <arg name="paused" value="true"/>
+    <!-- Управляем отображением интерфейса (можно запустить сервер без клиента) -->
+    <arg name="gui" value="$(arg gz_gui)"/>
+  </include>
+</launch>
